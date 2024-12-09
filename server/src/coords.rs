@@ -1,0 +1,90 @@
+use std::collections::hash_map::DefaultHasher;
+use std::hash::{Hash, Hasher};
+
+#[derive(Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, Clone, Copy)]
+pub struct CubeCoords {
+    q: i32,
+    r: i32,
+    s: i32,
+}
+
+const DIRECTIONS: [CubeCoords; 6] = [
+    CubeCoords { q: 1, r: 0, s: -1 },
+    CubeCoords { q: 1, r: -1, s: 0 },
+    CubeCoords { q: 0, r: -1, s: 1 },
+    CubeCoords { q: -1, r: 0, s: 1 },
+    CubeCoords { q: -1, r: 1, s: 0 },
+    CubeCoords { q: 0, r: 1, s: -1 },
+];
+
+impl CubeCoords {
+    pub fn new(q: i32, r: i32, s: i32) -> Self {
+        Self { q, r, s }
+    }
+}
+
+// implement hash
+impl Hash for CubeCoords {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        // Mimic the hash function logic from the C++ code
+        let mut hasher = DefaultHasher::new();
+        self.q.hash(&mut hasher);
+        let hq = hasher.finish();
+
+        hasher = DefaultHasher::new();
+        self.r.hash(&mut hasher);
+        let hr = hasher.finish();
+
+        let result = hq ^ (hr + 0x9e3779b9 + (hq << 6) + (hq >> 2));
+        state.write_u64(result);
+    }
+}
+
+pub fn cube_add(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
+    CubeCoords::new(a.q + b.q, a.r + b.r, a.s + b.s)
+}
+
+pub fn cube_substract(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
+    CubeCoords::new(a.q - b.q, a.r - b.r, a.s - b.s)
+}
+
+pub fn cube_scale(a: &CubeCoords, factor: i32) -> CubeCoords {
+    CubeCoords::new(a.q * factor, a.r * factor, a.s * factor)
+}
+
+pub fn cube_direction(dir: usize) -> CubeCoords {
+    DIRECTIONS[dir]
+}
+
+pub fn cube_neighbor(coords: &CubeCoords, dir: usize) -> CubeCoords {
+    cube_add(coords, &cube_direction(dir))
+}
+
+pub fn cube_ring(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
+    let mut results = Vec::new();
+
+    let mut coords = cube_add(center, &cube_scale(&cube_direction(4), radius));
+
+    for i in 0..6 {
+        for _j in 0..radius {
+            results.append(&mut vec![coords.clone()]);
+            coords = cube_neighbor(&coords, i)
+        }
+    }
+
+    results
+}
+
+/**
+ * Does not include center countrary to red blob games' implementation
+ */
+pub fn cube_spiral(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
+    let mut results: Vec<CubeCoords> = Vec::new();
+    let max = radius + 1;
+
+    for k in 1..max {
+        results.append(&mut cube_ring(center, k));
+    }
+
+    results
+}

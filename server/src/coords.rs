@@ -3,13 +3,6 @@ use std::hash::{Hash, Hasher};
 
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]
-pub struct CubeCoords {
-    q: i32,
-    r: i32,
-    s: i32,
-}
-
 const DIRECTIONS: [CubeCoords; 6] = [
     CubeCoords { q: 1, r: 0, s: -1 },
     CubeCoords { q: 1, r: -1, s: 0 },
@@ -19,9 +12,20 @@ const DIRECTIONS: [CubeCoords; 6] = [
     CubeCoords { q: 0, r: 1, s: -1 },
 ];
 
+#[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]
+pub struct CubeCoords {
+    q: i32,
+    r: i32,
+    s: i32,
+}
+
 impl CubeCoords {
     pub fn new(q: i32, r: i32, s: i32) -> Self {
         Self { q, r, s }
+    }
+
+    pub fn center() -> Self {
+        Self::new(0, 0, 0)
     }
 
     pub fn as_axial(&self) -> AxialCoords {

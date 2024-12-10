@@ -12,16 +12,19 @@ use crate::coords::{cube_spiral, AxialCoords, CubeCoords};
 
 pub fn generate_tilemap(radius: i32) -> TileMap {
     let mut map = TileMap::new();
-    let center = CubeCoords::new(0, 0, 0);
+    let center = CubeCoords::center();
     for coords in cube_spiral(&center, radius) {
         map.insert(coords.as_axial(), TileData::empty());
     }
     map
 }
 
+/// Data associated to an hexagon in the grid
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct TileData {
+    /// Owner of the tile, None => No owner yet
     user_id: Option<String>,
+    /// Strength represents the number of clicks needed in order to take ownership
     strength: u8,
 }
 

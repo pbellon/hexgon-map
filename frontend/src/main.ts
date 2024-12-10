@@ -33,7 +33,7 @@ const HEX_DEPTH = 1.5;
 const HEX_COLOR = 0xf5fecf;
 const MAP_RADIUS = 20;
 
-function createHexagon(size: number, depth: number, color: number): HexMesh {
+function createHexagon(size: number, depth: number): HexMesh {
   const shape = new Shape();
   for (let i = 0; i < 6; i++) {
     const angle = (Math.PI / 3) * i - Math.PI / 6; // 30° offset for pointy tops
@@ -58,7 +58,11 @@ function createHexagon(size: number, depth: number, color: number): HexMesh {
   const geometry = new ExtrudeGeometry(shape, extrudeSettings);
   geometry.translate(0, 0, -depth / 2); // Center vertically
 
-  const material = new MeshPhongMaterial({ color });
+  const material = new MeshPhongMaterial({
+    color: HEX_COLOR,
+    shininess: 25,
+    specular: 0xbbbbbb,
+  });
   return new Mesh(geometry, material);
 }
 
@@ -83,7 +87,7 @@ export function createHexMap(radius: number, onClick: OnClickCallback): Group {
 
   coordinates.forEach((coords) => {
     const { x, y } = axialToPixel(coords, HEX_SIZE + HEX_SPACING);
-    const hex = createHexagon(HEX_SIZE, HEX_DEPTH, HEX_COLOR); // Default color
+    const hex = createHexagon(HEX_SIZE, HEX_DEPTH); // Default color
 
     hex.position.set(x, y, 0);
     hex.userData = coords; // Attach cube coordinates to hex
@@ -165,8 +169,8 @@ scene.add(hexMap);
 const ambientLight = new AmbientLight(0xffffff, 0.95); // Soft global light
 scene.add(ambientLight);
 
-const directionalLight = new DirectionalLight(0xffffff, 1.2);
-directionalLight.position.set(100, 100, 1000); // Angled above the grid
+const directionalLight = new DirectionalLight(0xffffff, 0.3);
+directionalLight.position.set(100, 100, 2000); // Angled above the grid
 scene.add(directionalLight);
 
 function animate() {

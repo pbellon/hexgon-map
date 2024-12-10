@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct User {
     id: String,
     username: Option<String>,
@@ -13,5 +13,9 @@ impl User {
             id: Uuid::new_v4().into(),
             username,
         }
+    }
+
+    pub fn id(&self) -> String {
+        self.id.clone()
     }
 }

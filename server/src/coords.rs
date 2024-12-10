@@ -1,7 +1,9 @@
 use std::collections::hash_map::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
-#[derive(Debug, Eq, PartialEq, serde::Deserialize, serde::Serialize, Clone, Copy)]
+use serde::{Deserialize, Serialize};
+
+#[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]
 pub struct CubeCoords {
     q: i32,
     r: i32,
@@ -21,22 +23,9 @@ impl CubeCoords {
     pub fn new(q: i32, r: i32, s: i32) -> Self {
         Self { q, r, s }
     }
-}
 
-// implement hash
-impl Hash for CubeCoords {
-    fn hash<H: Hasher>(&self, state: &mut H) {
-        // Mimic the hash function logic from the C++ code
-        let mut hasher = DefaultHasher::new();
-        self.q.hash(&mut hasher);
-        let hq = hasher.finish();
-
-        hasher = DefaultHasher::new();
-        self.r.hash(&mut hasher);
-        let hr = hasher.finish();
-
-        let result = hq ^ (hr + 0x9e3779b9 + (hq << 6) + (hq >> 2));
-        state.write_u64(result);
+    pub fn as_axial(&self) -> AxialCoords {
+        AxialCoords::new(self.q, self.r)
     }
 }
 
@@ -87,4 +76,37 @@ pub fn cube_spiral(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
     }
 
     results
+}
+
+#[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]
+pub struct AxialCoords {
+    q: i32,
+    r: i32,
+}
+
+impl AxialCoords {
+    pub fn new(q: i32, r: i32) -> Self {
+        Self { q, r }
+    }
+
+    pub fn as_cube(&self) -> CubeCoords {
+        CubeCoords::new(self.q, self.r, -self.q - self.r)
+    }
+}
+
+// implement hash for storage in HashMap
+impl Hash for AxialCoords {
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        // Mimic the hash function logic from the C++ code
+        let mut hasher = DefaultHasher::new();
+        self.q.hash(&mut hasher);
+        let hq = hasher.finish();
+
+        hasher = DefaultHasher::new();
+        self.r.hash(&mut hasher);
+        let hr = hasher.finish();
+
+        let result = hq ^ (hr + 0x9e3779b9 + (hq << 6) + (hq >> 2));
+        state.write_u64(result);
+    }
 }

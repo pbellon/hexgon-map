@@ -4,23 +4,22 @@
 
 // }
 
-use std::{collections::HashMap, sync::RwLock};
+use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
 
-use crate::coords::{cube_spiral, CubeCoords};
+use crate::coords::{cube_spiral, AxialCoords, CubeCoords};
 
-pub fn generate_grid(radius: i32) -> TileStore {
-    let mut map = TileStore::new();
+pub fn generate_tilemap(radius: i32) -> TileMap {
+    let mut map = TileMap::new();
     let center = CubeCoords::new(0, 0, 0);
     for coords in cube_spiral(&center, radius) {
-        map.insert(coords, TileData::empty());
+        map.insert(coords.as_axial(), TileData::empty());
     }
-
     map
 }
 
-#[derive(Deserialize, Serialize, Debug)]
+#[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct TileData {
     user_id: Option<String>,
     strength: u8,
@@ -35,6 +34,24 @@ impl TileData {
     }
 }
 
-pub type TileStore = HashMap<CubeCoords, TileData>;
+pub type TileMap = HashMap<AxialCoords, TileData>;
 
-pub type TileStoreRwLock = RwLock<TileStore>;
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct GridSettings {
+    radius: i32,
+}
+
+#[derive(Deserialize, Serialize, Debug, Clone)]
+pub struct Grid {
+    pub tiles: TileMap,
+    settings: GridSettings,
+}
+
+impl Grid {
+    pub fn new(radius: i32) -> Self {
+        Self {
+            settings: GridSettings { radius },
+            tiles: generate_tilemap(radius),
+        }
+    }
+}

@@ -101,16 +101,7 @@ impl AxialCoords {
 // implement hash for storage in HashMap
 impl Hash for AxialCoords {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        // Mimic the hash function logic from the C++ code
-        let mut hasher = DefaultHasher::new();
-        self.q.hash(&mut hasher);
-        let hq = hasher.finish();
-
-        hasher = DefaultHasher::new();
-        self.r.hash(&mut hasher);
-        let hr = hasher.finish();
-
-        let result = hq ^ (hr + 0x9e3779b9 + (hq << 6) + (hq >> 2));
-        state.write_u64(result);
+        self.q.hash(state);
+        self.r.hash(state);
     }
 }

@@ -6,9 +6,11 @@ mod user;
 #[cfg(test)]
 mod tests;
 
+use actix_web::middleware::Logger;
 use actix_web::web::{Data, Json, Path};
 use actix_web::{get, post, App, HttpResponse, HttpServer, Responder};
 use coords::AxialCoords;
+use env_logger::Env;
 use game::GameData;
 use grid::TileData;
 use serde::Deserialize;
@@ -85,6 +87,7 @@ async fn register_user(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    env_logger::init_from_env(Env::default().default_filter_or("info"));
     let initial_data = load_data_from_file(40);
     let data = Data::new(RwLock::new(initial_data));
     let data_clone = data.clone();
@@ -92,8 +95,14 @@ async fn main() -> std::io::Result<()> {
         periodic_save(data_clone).await;
     });
 
-    HttpServer::new(move || App::new().app_data(data.clone()).service(post_tile))
-        .bind(("127.0.0.1", 8080))?
-        .run()
-        .await
+    HttpServer::new(move || {
+        App::new()
+            .app_data(data.clone())
+            .service(post_tile)
+            .wrap(Logger::default())
+            .wrap(Logger::new("%a %{User-Agent}i"))
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }

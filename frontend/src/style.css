@@ -1,0 +1,15 @@
+#login {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  transform: translateY(0);
+  transition: transform 0.5s ease;
+  background-color: #bbb;
+}
+
+#login.success {
+  transform: translateY(-200vh);
+}

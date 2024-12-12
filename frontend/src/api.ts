@@ -1,48 +1,71 @@
-import { AxialCoords } from "./types";
+import { GameData, AxialCoords, CoordsAndTile, User } from "./types";
 
-interface ApiGrid {
-  // TODO
-}
+export type GameApi = ReturnType<typeof initApi>;
 
-interface ApiTile {
-  user_id: string;
-  strength: number;
-  color: string;
+interface LocalGameState {
+  user: User | undefined;
+  tiles: CoordsAndTile[];
+  users: User[];
 }
 
 export function initApi() {
   const fullUrl = (path: string) => `http://localhost:8080${path}`;
 
+  // TODO: store & restore from localStorage
   // state
-  let state = {
-    auth: false,
-    grid: [],
+  let state: LocalGameState = {
+    user: undefined,
+    tiles: [],
+    users: [],
   };
 
-  const fetchGrid = async (): Promise<ApiGrid> => {
-    const {} = await fetch("localhost:8080");
-    return {};
+  const fetchGameData = async (): Promise<GameData> => {
+    const response = await fetch(fullUrl("/data"), { method: "get" });
+    const data = (await response.json()) as GameData;
+
+    state.tiles = data.tiles;
+    state.users = data.users;
+
+    return data;
   };
 
-  const clickAt = async (coords: AxialCoords): Promise<ApiTile> => {
-    const response = await fetch(fullUrl(`/tile/${coords.q}/${coords.r}`), {
+  const clickAt = async (coords: AxialCoords): Promise<CoordsAndTile[]> => {
+    if (state.user) {
+      const response = await fetch(fullUrl(`/tile/${coords.q}/${coords.r}`), {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: state.user.id,
+      });
+
+      return (await response.json()) as CoordsAndTile[];
+    }
+
+    return [];
+  };
+
+  const login = async (username: string): Promise<User> => {
+    const response = await fetch(fullUrl("/login"), {
       method: "POST",
       headers: {
         "content-type": "application/json",
       },
       body: JSON.stringify({
-        user_id: "test",
-        strength: 1,
+        username,
       }),
     });
 
-    const data = (await response.json()) as ApiTile;
+    const user = await response.json();
 
-    return data;
+    state.user = user;
+
+    return user as User;
   };
 
   return {
-    fetchGrid,
+    fetchGameData,
     clickAt,
+    login,
   };
 }

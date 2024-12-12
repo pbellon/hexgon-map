@@ -1,21 +1,48 @@
 import { Mesh } from "three";
 
-export interface CubeCoords {
+export type CubeCoords = {
   q: number;
   r: number;
   s: number;
-}
+};
 
-export interface AxialCoords {
+export type AxialCoords = {
   q: number;
   r: number;
-}
+};
 
-export interface PointCoords {
+export type PointCoords = {
   x: number;
   y: number;
-}
+};
 
 export type OnClickCallback = (data: AxialCoords, hex: Mesh) => void;
 
 export type WithCallback<T> = T & { onClick: OnClickCallback };
+
+export interface User {
+  username: string;
+  color: string;
+  id: string;
+}
+
+export type UserWithAuth = User & {
+  token: string;
+};
+
+export type CoordsAndTile = [coords: AxialCoords, tile: Tile];
+
+export type GameSettings = {
+  radius: number;
+};
+
+export interface GameData {
+  settings: GameSettings;
+  users: User[];
+  tiles: CoordsAndTile[];
+}
+
+export interface Tile {
+  user_id: string | undefined;
+  strength: number;
+}

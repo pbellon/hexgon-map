@@ -1,4 +1,9 @@
+import { initApi } from "./api";
+import { login } from "./login";
 import { render } from "./render";
-import "./style.css";
 
-render();
+const api = initApi();
+
+login(api, () => {
+  render(api);
+});

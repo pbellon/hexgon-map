@@ -1,31 +1,53 @@
-use serde::{Deserialize, Serialize};
+use log;
+use serde::Serialize;
 
 use crate::{
-    coords::{cube_spiral, AxialCoords},
-    grid::{Grid, TileData},
-    user::User,
+    coords::{cube_spiral_without_center, AxialCoords},
+    grid::{generate_tilemap, GridSettings, TileData, TileMap},
+    user::{PublicUser, User},
 };
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct GameData {
-    grid: Grid,
+    tiles: TileMap,
+    settings: GridSettings,
     users: Vec<User>,
 }
 
+#[derive(Serialize, Debug, Clone)]
+pub struct PublicGameData {
+    settings: GridSettings,
+    tiles: Vec<(AxialCoords, TileData)>,
+    users: Vec<PublicUser>,
+}
+
 impl GameData {
+    pub fn as_public(&self) -> PublicGameData {
+        PublicGameData {
+            tiles: self
+                .tiles
+                .iter()
+                .map(|(coords, tile)| (*coords, (*tile).clone()))
+                .collect(),
+            users: self.users.iter().map(|u| u.as_public()).collect(),
+            settings: self.settings.clone(),
+        }
+    }
+
     pub fn new(radius: i32) -> Self {
         Self {
-            grid: Grid::new(radius),
+            settings: GridSettings { radius },
+            tiles: generate_tilemap(radius),
             users: Vec::new(),
         }
     }
 
     fn get(&self, coords: &AxialCoords) -> Option<&TileData> {
-        self.grid.tiles.get(coords)
+        self.tiles.get(coords)
     }
 
     pub fn insert(&mut self, coords: AxialCoords, tile: TileData) -> Option<TileData> {
-        self.grid.tiles.insert(coords, tile)
+        self.tiles.insert(coords, tile)
     }
 
     /// Updates a neighbor tile's strength and ownership, if needed, based on the current context.
@@ -74,7 +96,7 @@ impl GameData {
                 let mut remaining_strength = current_tile.strength;
 
                 // Adjust current tile's strength
-                if remaining_strength > 1 {
+                if remaining_strength > 0 {
                     remaining_strength -= 1;
                 }
 
@@ -84,7 +106,7 @@ impl GameData {
 
                     // Process adjacent tiles
                     let adjacent_tiles: Vec<(AxialCoords, TileData)> =
-                        cube_spiral(&coords.as_cube(), 2)
+                        cube_spiral_without_center(&coords.as_cube(), 2)
                             .into_iter()
                             .filter_map(|cube_coords| {
                                 let adjacent_coords = cube_coords.as_axial();
@@ -127,13 +149,9 @@ impl GameData {
         updated_tiles
     }
 
-    pub fn create_user(&mut self, username: Option<String>) -> String {
+    pub fn create_user(&mut self, username: String) -> User {
         let user = User::new(username);
         self.users.push(user.clone());
-        user.id()
-    }
-
-    pub fn grid(&self) -> &Grid {
-        &self.grid
+        user
     }
 }

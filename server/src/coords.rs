@@ -1,4 +1,4 @@
-use std::hash::{Hash, Hasher};
+use std::hash::{DefaultHasher, Hash, Hasher};
 
 use serde::{Deserialize, Serialize};
 
@@ -59,7 +59,7 @@ pub fn cube_ring(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
 
     for i in 0..6 {
         for _j in 0..radius {
-            results.append(&mut vec![coords.clone()]);
+            results.push(coords.clone());
             coords = cube_neighbor(&coords, i)
         }
     }
@@ -70,8 +70,13 @@ pub fn cube_ring(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
 /**
  * Does not include center countrary to red blob games' implementation
  */
-pub fn cube_spiral(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
+pub fn cube_spiral(center: &CubeCoords, radius: i32, with_center: bool) -> Vec<CubeCoords> {
     let mut results: Vec<CubeCoords> = Vec::new();
+
+    if with_center {
+        results.push(center.clone());
+    }
+
     let max = radius + 1;
 
     for k in 1..max {
@@ -79,6 +84,10 @@ pub fn cube_spiral(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
     }
 
     results
+}
+
+pub fn cube_spiral_without_center(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
+    cube_spiral(center, radius, false)
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]
@@ -100,7 +109,23 @@ impl AxialCoords {
 // implement hash for storage in HashMap
 impl Hash for AxialCoords {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        self.q.hash(state);
-        self.r.hash(state);
+        let mut int_hasher = DefaultHasher::new();
+
+        // Compute individual hashes for q and r
+        self.q.hash(&mut int_hasher);
+        let hq = int_hasher.finish();
+        int_hasher = DefaultHasher::new(); // Reset the hasher for `r`
+        self.r.hash(&mut int_hasher);
+        let hr = int_hasher.finish();
+
+        // Combine the hashes using the same logic
+        let combined_hash = hq
+            ^ (hr
+                .wrapping_add(0x9e3779b9)
+                .wrapping_add(hq << 6)
+                .wrapping_add(hq >> 2));
+
+        // Feed the combined hash to the state
+        state.write_u64(combined_hash);
     }
 }

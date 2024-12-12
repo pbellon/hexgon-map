@@ -13,7 +13,8 @@ use crate::coords::{cube_spiral, AxialCoords, CubeCoords};
 pub fn generate_tilemap(radius: i32) -> TileMap {
     let mut map = TileMap::new();
     let center = CubeCoords::center();
-    for coords in cube_spiral(&center, radius) {
+
+    for coords in cube_spiral(&center, radius, true) {
         map.insert(coords.as_axial(), TileData::empty());
     }
     map
@@ -39,22 +40,7 @@ impl TileData {
 
 pub type TileMap = HashMap<AxialCoords, TileData>;
 
-#[derive(Deserialize, Serialize, Debug, Clone)]
+#[derive(Serialize, Debug, Clone)]
 pub struct GridSettings {
-    radius: i32,
-}
-
-#[derive(Deserialize, Serialize, Debug, Clone)]
-pub struct Grid {
-    pub tiles: TileMap,
-    settings: GridSettings,
-}
-
-impl Grid {
-    pub fn new(radius: i32) -> Self {
-        Self {
-            settings: GridSettings { radius },
-            tiles: generate_tilemap(radius),
-        }
-    }
+    pub radius: i32,
 }

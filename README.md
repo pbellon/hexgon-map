@@ -1,8 +1,11 @@
 ## TODO
 
 - [x] server skeleton
-- [ ] simple frontend (basic grid drawing, click handle)
-- [ ] algorithms with cubes coords, storage with axial coords
+- [x] simple frontend (basic grid drawing, click handle)
+- [x] algorithms with cubes coords, storage with axial coords
+- [ ] handle game logic when clicking on tile (front+back)
+- [ ] user registration & security
+- [ ] benchmark
 
 ## Resources
 

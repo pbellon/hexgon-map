@@ -6,10 +6,10 @@ use uuid::Uuid;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct User {
-    id: String,
+    pub id: String,
     // token: String,
-    username: String,
-    color: String,
+    pub username: String,
+    pub color: String,
 }
 
 #[derive(Serialize, Debug, Clone)]

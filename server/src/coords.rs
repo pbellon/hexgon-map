@@ -92,8 +92,8 @@ pub fn cube_spiral_without_center(center: &CubeCoords, radius: i32) -> Vec<CubeC
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]
 pub struct AxialCoords {
-    q: i32,
-    r: i32,
+    pub q: i32,
+    pub r: i32,
 }
 
 impl AxialCoords {

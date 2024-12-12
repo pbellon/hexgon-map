@@ -1,4 +1,3 @@
-use log;
 use serde::Serialize;
 
 use crate::{
@@ -22,6 +21,15 @@ pub struct PublicGameData {
 }
 
 impl GameData {
+    pub fn score_of_user(&self, user_id: &str) -> u32 {
+        let nb_tiles = self
+            .tiles
+            .iter()
+            .filter(|(_, tile)| tile.user_id == Some(user_id.to_string()))
+            .count();
+        nb_tiles as u32
+    }
+
     pub fn as_public(&self) -> PublicGameData {
         PublicGameData {
             tiles: self
@@ -55,7 +63,7 @@ impl GameData {
         &mut self,
         coords: AxialCoords,
         neighbor: TileData,
-        click_user_id: &String,
+        click_user_id: &str,
         current_user_id: &Option<String>,
         current_tile_strength: &mut u8,
         updated_tiles: &mut Vec<(AxialCoords, TileData)>,
@@ -70,7 +78,7 @@ impl GameData {
             updated_tiles.push((coords, new_neighbor));
         }
         // Case 2: Increase neighbor strength if it's owned by the clicking user
-        else if neighbor.user_id == Some(click_user_id.clone()) {
+        else if neighbor.user_id == Some(click_user_id.to_string()) {
             *current_tile_strength += 1;
             let new_neighbor = TileData {
                 strength: neighbor.strength + 1,
@@ -83,7 +91,7 @@ impl GameData {
     pub fn handle_click(
         &mut self,
         coords: AxialCoords,
-        click_user_id: String,
+        click_user_id: &str,
     ) -> Vec<(AxialCoords, TileData)> {
         let mut updated_tiles = Vec::new();
 
@@ -92,7 +100,7 @@ impl GameData {
             let current_owner = current_tile.user_id.clone();
 
             // If the tile is not owned by the clicking user
-            if current_owner != Some(click_user_id.clone()) {
+            if current_owner != Some(click_user_id.to_string()) {
                 let mut remaining_strength = current_tile.strength;
 
                 // Adjust current tile's strength
@@ -129,7 +137,7 @@ impl GameData {
 
                     // Transfer ownership of the current tile
                     let new_tile = TileData {
-                        user_id: Some(click_user_id.clone()),
+                        user_id: Some(click_user_id.to_string()),
                         strength: remaining_strength,
                     };
                     self.insert(coords, new_tile.clone());

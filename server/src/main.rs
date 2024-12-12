@@ -10,12 +10,16 @@ mod tests;
 use actix_web::middleware::Logger;
 use actix_web::web::{resource, Data, Json, Path};
 use actix_web::{get, post, App, HttpResponse, HttpServer, Responder};
+use actix_web_actors::ws;
 use coords::AxialCoords;
 use env_logger::Env;
 use game::GameData;
 use serde::Deserialize;
 use std::sync::RwLock;
-use websocket::{init_clients, ws_handler, ClientList};
+use websocket::{
+    init_clients, notify_new_user, notify_score_change, tile_change_message, ws_handler,
+    ClientList, MyBinaryMessage,
+};
 
 const DEFAULT_GRID_RADIUS: u8 = 80;
 
@@ -23,11 +27,23 @@ const DEFAULT_GRID_RADIUS: u8 = 80;
 async fn post_tile(
     path: Path<AxialCoords>,
     game_data: Data<RwLock<GameData>>,
+    clients: Data<ClientList>,
     user_id: String,
 ) -> impl Responder {
     let coords = path.into_inner();
     let mut store = game_data.write().unwrap();
-    let new_tiles = store.handle_click(coords, user_id);
+    let new_tiles = store.handle_click(coords, &user_id);
+
+    for client in clients.lock().unwrap().iter() {
+        new_tiles.iter().for_each(|(coords, tile)| {
+            client.do_send(MyBinaryMessage(tile_change_message(&coords, &tile)));
+        });
+    }
+
+    let new_score = store.score_of_user(&user_id);
+
+    notify_score_change(&clients, &user_id, new_score);
+
     HttpResponse::Ok().json(new_tiles)
     // return HttpResponse::BadRequest().body(format!("Tile does not exists at {:?}", coords));
 }
@@ -47,11 +63,14 @@ struct RegisterUserParams {
 #[post("/login")]
 async fn register_user(
     app_data: Data<RwLock<GameData>>,
+    clients: Data<ClientList>,
     post_params: Json<RegisterUserParams>,
 ) -> impl Responder {
     let mut store = app_data.write().unwrap();
     let username = post_params.into_inner().username;
     let user = store.create_user(username);
+
+    notify_new_user(&clients, &user.id, &user.username, &user.color);
 
     HttpResponse::Ok().json(user)
 }
@@ -77,7 +96,7 @@ async fn main() -> std::io::Result<()> {
             .service(post_tile)
             .service(get_game_data)
             .service(register_user)
-            .service(resource("/ws/").to(ws_handler))
+            .service(resource("/ws").to(ws_handler))
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
     })

@@ -1348,6 +1348,7 @@ dependencies = [
  "actix-web-actors",
  "actix-websockets",
  "async-std",
+ "bytes",
  "env_logger",
  "log",
  "serde",

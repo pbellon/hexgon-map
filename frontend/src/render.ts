@@ -135,7 +135,10 @@ export function handleHexInteraction(
   window.addEventListener("click", onClick);
 }
 
-export async function render(api: ReturnType<typeof initApi>) {
+export async function render(
+  gameData: GameData,
+  api: ReturnType<typeof initApi>
+) {
   // Create renderer
   const canvas = document.getElementById("render") as HTMLCanvasElement;
 
@@ -168,9 +171,7 @@ export async function render(api: ReturnType<typeof initApi>) {
     LEFT: MOUSE.PAN,
   };
 
-  const data = await api.fetchGameData();
-
-  const hexMap = createHexMap(data, async (tileData, hex) => {
+  const hexMap = createHexMap(gameData, async (tileData) => {
     // TODO: compute strength localy based on current data
 
     // send data and reconcile after response
@@ -180,7 +181,7 @@ export async function render(api: ReturnType<typeof initApi>) {
       const hex = hexMap.getObjectByName(getTileName(coords)) as Mesh;
       if (hex) {
         // could break here
-        const owner = ownerOf(data, tile);
+        const owner = ownerOf(gameData, tile);
         (hex.material as MeshPhongMaterial).color.set(
           hexagonColor(owner.color, tile.strength)
         );
@@ -206,6 +207,143 @@ export async function render(api: ReturnType<typeof initApi>) {
   }
 
   animate();
+
+  function handeTileChange(data: Uint8Array) {
+    const view = new DataView(data.buffer);
+    // Process the binary data (for example, extracting coordinates and tile data)
+    const q = view.getInt32(1, true); // Read the q value (i32)
+    const r = view.getInt32(5, true); // Read the r value (i32)
+    const strength = data[9]; // Read the strength (u8)
+    const userIdLength = data[10]; // Read the user ID length (u8)
+
+    // Read the user ID
+    let userId = "";
+    if (userIdLength > 0) {
+      userId = new TextDecoder().decode(data.slice(11, 11 + userIdLength));
+    }
+
+    console.log("[ws/handleTileChange]", {
+      q,
+      r,
+      strength,
+      userId,
+    });
+
+    const hex = hexMap.getObjectByName(getTileName({ q, r })) as Mesh;
+    if (hex) {
+      let user;
+      try {
+        user = gameData.users.find(({ id }) => id === userId);
+        console.log({
+          user,
+          users: [...gameData.users.map((u) => ({ ...u }))],
+        });
+        if (user) {
+          (hex.material as MeshPhongMaterial).color.set(
+            hexagonColor(user.color, strength)
+          );
+        }
+      } catch (e) {
+        console.error(`Did not found user for ${userId} ID`, gameData.users, e);
+        // fail silently
+      }
+    }
+  }
+
+  function handleNewUserMessage(data: Uint8Array) {
+    // Create a DataView instance for efficient reading of binary data
+    const view = new DataView(data.buffer);
+
+    // Index 1: length of the user ID (u8)
+    const idLength = view.getUint8(1);
+
+    // Index 2 to 2 + idLength: user ID bytes
+    const id = new TextDecoder().decode(data.slice(2, 2 + idLength));
+
+    // The next byte is the length of the user name (u8)
+    const usernameLength = data[2 + idLength]; // userName length comes after user ID
+
+    // Index 2 + idLength + 1 to 2 + idLength + usernameLength: user name bytes
+    const username = new TextDecoder().decode(
+      data.slice(3 + idLength, 3 + idLength + usernameLength)
+    );
+
+    // The next byte is the length of the user color (u8)
+    const colorLength = data[3 + idLength + usernameLength];
+
+    // Index 3 + idLength + usernameLength + 1 to 3 + idLength + usernameLength + colorLength: user color bytes
+    const color = new TextDecoder().decode(
+      data.slice(
+        4 + idLength + usernameLength,
+        4 + idLength + usernameLength + colorLength
+      )
+    );
+
+    console.log("[ws/handleNewUserMessage]", {
+      username, // please help me parse those
+      color,
+      id,
+    });
+
+    gameData.users.push({
+      username, // please help me parse those
+      color,
+      id,
+    });
+  }
+
+  function handleScoreChangeMessage(data: Uint8Array) {
+    // TODO
+  }
+
+  // WEBSOCKET
+  const socket = new WebSocket("ws://localhost:8080/ws"); // Adjust the URL if needed
+  socket.binaryType = "arraybuffer";
+
+  // Function to handle incoming messages
+  socket.addEventListener("message", (e) => {
+    console.log("Received message", e.data);
+
+    if (!(e.data instanceof ArrayBuffer)) {
+      return;
+    }
+
+    // Convert the ArrayBuffer into a byte array
+    const data = new Uint8Array(e.data);
+
+    // First byte is the message type
+    const messageType = data[0];
+
+    switch (messageType) {
+      case 0x01:
+        handeTileChange(data);
+        break;
+      case 0x02: // new player
+        handleNewUserMessage(data);
+        break;
+      case 0x03: // Score change message
+        handleScoreChangeMessage(data);
+        break;
+      // Other cases for different message types (e.g., player login)
+      default:
+        console.error("Unknown message type:", messageType);
+    }
+  });
+
+  // Handle WebSocket errors
+  socket.onerror = function (error) {
+    console.error("WebSocket Error: ", error);
+  };
+
+  // Handle WebSocket connection open event
+  socket.onopen = function (event) {
+    console.log("WebSocket is open now.");
+  };
+
+  // Handle WebSocket connection close event
+  socket.onclose = function (event) {
+    console.log("WebSocket is closed now.");
+  };
 }
 
 // flow

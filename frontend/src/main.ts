@@ -4,6 +4,6 @@ import { render } from "./render";
 
 const api = initApi();
 
-login(api, () => {
-  render(api);
+login(api, async (gameData) => {
+  render(gameData, api);
 });

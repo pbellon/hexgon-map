@@ -1,6 +1,7 @@
 import { GameApi } from "./api";
+import { GameData } from "./types";
 
-type OnLoggedSuccess = () => void;
+type OnLoggedSuccess = (gameData: GameData) => void;
 
 export function login(api: GameApi, onLogged: OnLoggedSuccess) {
   const login = document.querySelector("#login");
@@ -19,7 +20,9 @@ export function login(api: GameApi, onLogged: OnLoggedSuccess) {
     const value = input.value;
     // TODO: validation & error handling
     await api.login(value);
+    const gameData = await api.fetchGameData();
+
     login.classList.add("success");
-    onLogged();
+    onLogged(gameData);
   });
 }

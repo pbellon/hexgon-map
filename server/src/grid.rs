@@ -23,9 +23,9 @@ pub fn generate_tilemap(radius: i32) -> TileMap {
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct TileData {
     /// Owner of the tile, None => No owner yet
-    user_id: Option<String>,
+    pub user_id: Option<String>,
     /// Strength represents the number of clicks needed in order to take ownership
-    strength: u8,
+    pub strength: u8,
 }
 
 impl TileData {

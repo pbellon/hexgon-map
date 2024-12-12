@@ -2,68 +2,44 @@ mod coords;
 mod game;
 mod grid;
 mod user;
+mod websocket;
 
 #[cfg(test)]
 mod tests;
 
 use actix_web::middleware::Logger;
-use actix_web::web::{Data, Json, Path};
+use actix_web::web::{resource, Data, Json, Path};
 use actix_web::{get, post, App, HttpResponse, HttpServer, Responder};
 use coords::AxialCoords;
 use env_logger::Env;
 use game::GameData;
-use grid::TileData;
 use serde::Deserialize;
-use serde_json;
-use std::fs::File;
-use std::io::{Read, Write};
 use std::sync::RwLock;
-use std::time::Duration;
-use tokio::task;
+use websocket::{init_clients, ws_handler, ClientList};
 
-const DATA_FILE: &str = "game_data.json";
+const DEFAULT_GRID_RADIUS: u8 = 80;
 
-fn load_data_from_file(radius: i32) -> GameData {
-    if let Ok(mut file) = File::open(DATA_FILE) {
-        let mut contents = String::new();
-        if file.read_to_string(&mut contents).is_ok() {
-            if let Ok(data) = serde_json::from_str::<GameData>(&contents) {
-                return data;
-            }
-        }
-    }
-
-    GameData::new(radius)
-}
-
-async fn periodic_save(data: Data<RwLock<GameData>>) {
-    loop {
-        tokio::time::sleep(Duration::from_secs(30)).await; // Save every 30 seconds
-        if let Ok(store) = data.write() {
-            if let Ok(serialized) = serde_json::to_string(&*store) {
-                if let Ok(mut file) = File::create(DATA_FILE) {
-                    let _ = file.write_all(serialized.as_bytes());
-                }
-            }
-        }
-    }
+#[derive(Deserialize)]
+struct PostTileData {
+    pub user_id: String,
 }
 
 #[post("/tile/{q}/{r}")]
 async fn post_tile(
     path: Path<AxialCoords>,
-    data: Data<RwLock<GameData>>,
-    tile_data: Json<TileData>,
+    game_data: Data<RwLock<GameData>>,
+    tile_data: Json<PostTileData>,
 ) -> impl Responder {
     let coords = path.into_inner();
-    let mut store = data.write().unwrap();
-    store.insert(coords, tile_data.into_inner());
-    HttpResponse::Ok().body("Tile updated")
+    let mut store = game_data.write().unwrap();
+    let new_tiles = store.handle_click(coords, tile_data.into_inner().user_id);
+    HttpResponse::Ok().json(new_tiles)
+    // return HttpResponse::BadRequest().body(format!("Tile does not exists at {:?}", coords));
 }
 
 #[get("/grid")]
 async fn get_grid(app_data: Data<RwLock<GameData>>) -> impl Responder {
-    let store: std::sync::RwLockReadGuard<'_, GameData> = app_data.read().unwrap();
+    let store = app_data.read().unwrap();
 
     HttpResponse::Ok().json(store.grid())
 }
@@ -88,17 +64,23 @@ async fn register_user(
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(Env::default().default_filter_or("info"));
-    let initial_data = load_data_from_file(40);
+
+    let initial_data = GameData::new(DEFAULT_GRID_RADIUS as i32);
     let data = Data::new(RwLock::new(initial_data));
-    let data_clone = data.clone();
-    task::spawn(async move {
-        periodic_save(data_clone).await;
-    });
+
+    let clients: ClientList = init_clients();
+
+    // let data_clone = data.clone();
+    // task::spawn(async move {
+    //     periodic_save(data_clone).await;
+    // });
 
     HttpServer::new(move || {
         App::new()
             .app_data(data.clone())
+            .app_data(Data::new(clients.clone()))
             .service(post_tile)
+            .service(resource("/ws/").to(ws_handler))
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
     })

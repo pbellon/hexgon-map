@@ -7,12 +7,13 @@ import { render } from "./render";
 
   setLoading(true);
 
-  const gameData = await api.fetchGameData();
-
-  setLoading(false);
-
-  login(api, () => {
-    setLoading(false);
-    render(gameData, api);
+  render({
+    api,
+    onReady: () => {
+      setLoading(false);
+      login(api, () => {
+        setLoading(false);
+      });
+    },
   });
 })();

@@ -49,8 +49,9 @@ export function createHexagon(
 
   const material = new MeshPhongMaterial({
     color: hexagonColor(color, strength),
-    shininess: 25,
-    specular: 0xcccccc,
+    shininess: 10,
+    specular: 0xefefef,
+    reflectivity: 0,
   });
   return new Mesh(geometry, material);
 }

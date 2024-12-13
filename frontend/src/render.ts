@@ -12,11 +12,20 @@ import {
   WebGLRenderer,
 } from "three";
 import { getTileName, ownerOf } from "./grid";
-import { GameData, AxialCoords, WithCallback } from "./types";
+import { AxialCoords, WithCallback } from "./types";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
-import { initApi } from "./api";
+import { GameApi } from "./api";
 import { createHexMap } from "./shapes";
 import { hexagonColor } from "./colors";
+
+function handleLights(scene: Scene) {
+  const ambientLight = new AmbientLight(0xffffff, 0.95); // Soft global light
+  scene.add(ambientLight);
+
+  const directionalLight = new DirectionalLight(0xffffff, 0.3);
+  directionalLight.position.set(100, 100, 500); // Angled above the grid
+  scene.add(directionalLight);
+}
 
 export function handleHexInteraction(
   camera: PerspectiveCamera,
@@ -45,10 +54,17 @@ export function handleHexInteraction(
   window.addEventListener("click", onClick);
 }
 
-export async function render(
-  gameData: GameData,
-  api: ReturnType<typeof initApi>
-) {
+type RenderParams = {
+  api: GameApi;
+  onReady: () => void;
+};
+
+export async function render({ api, onReady }: RenderParams) {
+  let gameData = await api.fetchGameData();
+  let rendered = false;
+  let wsConnected = false;
+  let onReadyCalled = false;
+
   // Create renderer
   const canvas = document.getElementById("render") as HTMLCanvasElement;
 
@@ -103,22 +119,28 @@ export async function render(
 
   scene.add(hexMap);
 
-  const ambientLight = new AmbientLight(0xffffff, 0.95); // Soft global light
-  scene.add(ambientLight);
-
-  const directionalLight = new DirectionalLight(0xffffff, 0.3);
-  directionalLight.position.set(100, 100, 500); // Angled above the grid
-  scene.add(directionalLight);
+  handleLights(scene);
 
   function animate() {
-    requestAnimationFrame(animate);
     controls.update();
     renderer.render(scene, camera);
+    rendered = true;
+
+    if (rendered && wsConnected && !onReadyCalled) {
+      onReady();
+      onReadyCalled = true;
+    }
   }
 
-  animate();
+  renderer.setAnimationLoop(animate);
 
   api.configureWebSocket({
+    onOpen: () => {
+      wsConnected = true;
+    },
+    onClose: () => {
+      wsConnected = false;
+    },
     onNewUser: (user) => {
       gameData.users.push(user);
     },
@@ -143,6 +165,13 @@ export async function render(
       }
     },
   });
+
+  window.onresize = function () {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  };
 }
 
 // flow

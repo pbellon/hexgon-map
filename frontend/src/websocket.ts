@@ -3,11 +3,13 @@ import { AxialCoords, Tile, User } from "./types";
 export type WebSocketHandlersParams = {
   onTileChange: (coors: AxialCoords, tile: Tile) => void;
   onNewUser: (user: User) => void;
+  onOpen: () => void;
+  onClose: () => void;
 };
 
 export function webSocketHandler(
   url: string,
-  { onTileChange, onNewUser }: WebSocketHandlersParams
+  { onOpen, onClose, onTileChange, onNewUser }: WebSocketHandlersParams
 ): WebSocket {
   function handeTileChange(data: Uint8Array) {
     const view = new DataView(data.buffer);
@@ -107,6 +109,7 @@ export function webSocketHandler(
   // Register WebSocket event listeners
   socket.addEventListener("open", function (event) {
     console.log("WebSocket is open now.");
+    onOpen();
   });
 
   socket.addEventListener("error", function (error) {
@@ -115,6 +118,7 @@ export function webSocketHandler(
 
   socket.addEventListener("close", function (event) {
     console.log("WebSocket is closed now.");
+    onClose();
   });
 
   return socket;

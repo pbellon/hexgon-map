@@ -36,9 +36,9 @@ pub fn cube_add(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
     CubeCoords::new(a.q + b.q, a.r + b.r, a.s + b.s)
 }
 
-pub fn cube_substract(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
-    CubeCoords::new(a.q - b.q, a.r - b.r, a.s - b.s)
-}
+// pub fn cube_substract(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
+//     CubeCoords::new(a.q - b.q, a.r - b.r, a.s - b.s)
+// }
 
 pub fn cube_scale(a: &CubeCoords, factor: i32) -> CubeCoords {
     CubeCoords::new(a.q * factor, a.r * factor, a.s * factor)

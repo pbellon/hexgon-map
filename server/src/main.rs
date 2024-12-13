@@ -10,7 +10,6 @@ mod tests;
 use actix_web::middleware::Logger;
 use actix_web::web::{resource, Data, Json, Path};
 use actix_web::{get, post, App, HttpResponse, HttpServer, Responder};
-use actix_web_actors::ws;
 use coords::AxialCoords;
 use env_logger::Env;
 use game::GameData;
@@ -32,10 +31,10 @@ async fn post_tile(
 ) -> impl Responder {
     let coords = path.into_inner();
     let mut store = game_data.write().unwrap();
-    let new_tiles = store.handle_click(coords, &user_id);
+    let updated_tiles = store.handle_click(coords, &user_id);
 
     for client in clients.lock().unwrap().iter() {
-        new_tiles.iter().for_each(|(coords, tile)| {
+        updated_tiles.iter().for_each(|(coords, tile)| {
             client.do_send(MyBinaryMessage(tile_change_message(&coords, &tile)));
         });
     }
@@ -44,7 +43,7 @@ async fn post_tile(
 
     notify_score_change(&clients, &user_id, new_score);
 
-    HttpResponse::Ok().json(new_tiles)
+    HttpResponse::Ok().json(updated_tiles)
     // return HttpResponse::BadRequest().body(format!("Tile does not exists at {:?}", coords));
 }
 

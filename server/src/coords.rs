@@ -1,4 +1,4 @@
-use std::hash::{DefaultHasher, Hash, Hasher};
+use std::hash::{Hash, Hasher};
 
 use serde::{Deserialize, Serialize};
 
@@ -70,12 +70,8 @@ pub fn cube_ring(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
 /**
  * Does not include center countrary to red blob games' implementation
  */
-pub fn cube_spiral(center: &CubeCoords, radius: i32, with_center: bool) -> Vec<CubeCoords> {
-    let mut results: Vec<CubeCoords> = Vec::new();
-
-    if with_center {
-        results.push(center.clone());
-    }
+pub fn cube_spiral(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
+    let mut results: Vec<CubeCoords> = vec![center.clone()];
 
     let max = radius + 1;
 
@@ -84,10 +80,6 @@ pub fn cube_spiral(center: &CubeCoords, radius: i32, with_center: bool) -> Vec<C
     }
 
     results
-}
-
-pub fn cube_spiral_without_center(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
-    cube_spiral(center, radius, false)
 }
 
 #[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]

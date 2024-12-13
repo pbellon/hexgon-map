@@ -7,19 +7,21 @@
 - [x] user registration
 - [x] basic websocket communication
 - [x] handle a new player appearance, maybe add color to ws messages
+- [-] change the way the frontend app is initialized
+  - [x] 0. set loading mode on login page
+  - [x] 1. load game data
+  - [x] 2. start rendering in the background and start listenning for WebSocket events
+  - [x] 3. once initialized and a first render occured, exit loading mode
+  - [ ] 4. if user was previously logged (check localStorage) and token did not expired (not sure how)
+       then directly allow play
+  - [x] 5. if not logged (or kicked out) let user enters its information (if not previously logged and
+       token did not expired)
+- [ ] enforce `GameData::handle_click` algo by adding strong unit tests
 - [ ] (front) improve state management, we need a single source of truth
 - [ ] (front+back) handle user scores
 - [ ] (back) reduce user ID size if possible?
 - [ ] (back) make color more random (use generated uuid ?)
-- [ ] change the way the frontend app is initialized  
-       0. set loading mode on login page  
-       1. load game data  
-       2. start rendering in the background and start listenning for WebSocket events  
-       3. once initialized and a first render occured, exit loading mode  
-       4. if user was previously logged (check localStorage) and token did not expired (not sure how)
-      then directly allow play  
-       5. if not logged (or kicked out) let user enters its information (if not previously logged and
-      token did not expired)
+
 - [ ] (front+backend) handle token-based registration and token expiration that will be helpful to
       clean the map from inactive users (maybe start with 1h validity => after one hour of
       inactivity you must log again)
@@ -31,6 +33,18 @@
       -> Thanks ThreeJS for the wonderful lib
       -> Thanks Red Blob games for the algorithms
       -> Thanks ToneJS (if we use it)
+
+## General game rules
+
+- a tile is either owned or not
+- when owned a tile has a strength, this strength make the tile less likely to be disowned and will require additional click to be owned by someone else.
+- this strength is a virtual attribute that is not stored directly
+- instead the only counter that is stored is the "damage" one,
+  - it can be increased when a user click on a tile it does not own
+  - it can be decreased when a user click on a tile it owns
+  - it will be reset to 0 when a tile owner changes
+  - it's used to calculate a tile strength => strengh = number of contiguous tiles owned by user - damage
+  - when this compute strength reach 0, the tile changes of owner
 
 ## Resources
 

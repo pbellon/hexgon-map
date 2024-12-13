@@ -31,7 +31,7 @@ async fn post_tile(
 ) -> impl Responder {
     let coords = path.into_inner();
     let mut store = game_data.write().unwrap();
-    let updated_tiles = store.handle_click(coords, &user_id);
+    let updated_tiles = store.handle_click(&coords, &user_id);
 
     for client in clients.lock().unwrap().iter() {
         updated_tiles.iter().for_each(|(coords, tile)| {

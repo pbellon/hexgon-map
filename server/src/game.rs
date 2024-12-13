@@ -1,5 +1,6 @@
 use std::collections::HashMap;
 
+use log;
 use serde::Serialize;
 
 use crate::{
@@ -65,47 +66,43 @@ impl GameData {
     /// otherwise will return empty Vec.
     fn contiguous_neighboors_of_tile(
         &self,
-        coords: &AxialCoords,
+        tile_coords: &AxialCoords,
         user_id: &str,
         radius: u8,
     ) -> Vec<(AxialCoords, TileData)> {
         let mut processed_map: HashMap<AxialCoords, bool> = HashMap::new();
         let mut results = Vec::new();
         let user_id_str = user_id.to_string();
-        if let Some(t) = self.get(coords) {
-            if t.user_id == Some(user_id.to_string()) {
-                processed_map.insert(coords.clone(), true);
-                results.push((coords.clone(), t.clone()));
-                let mut to_check = vec![coords.clone()];
+        let mut to_check = vec![tile_coords.clone()];
 
-                for _ in 0..radius {
-                    let mut next_to_check = Vec::new();
+        for _ in 0..radius {
+            let mut next_to_check = Vec::new();
 
-                    for coord in &to_check {
-                        let ring = cube_ring(&coord.as_cube(), 1);
+            // Temporarily take the value of `to_check` to avoid the borrowing issue
+            for coords_to_check in std::mem::take(&mut to_check) {
+                let ring = cube_ring(&coords_to_check.as_cube(), 1);
 
-                        for rc in ring {
-                            if let Some(tile) = self.tiles.get(&rc.as_axial()) {
-                                if tile.user_id == Some(user_id_str.clone()) {
-                                    let axial_coords = rc.as_axial();
-                                    if processed_map.get(&axial_coords).is_none() {
-                                        next_to_check.push(axial_coords);
-                                        results.push((axial_coords, tile.clone()));
-                                        processed_map.insert(axial_coords, true);
-                                    }
+                for rc in ring {
+                    if rc.as_axial() != *tile_coords {
+                        if let Some(tile) = self.tiles.get(&rc.as_axial()) {
+                            if tile.user_id == Some(user_id_str.clone()) {
+                                let axial_coords = rc.as_axial();
+                                if processed_map.get(&axial_coords).is_none() {
+                                    next_to_check.push(axial_coords);
+                                    results.push((axial_coords, tile.clone()));
+                                    processed_map.insert(axial_coords, true);
                                 }
                             }
                         }
                     }
-
-                    to_check = next_to_check;
                 }
             }
+            to_check = next_to_check;
         }
-
         results
     }
 
+    // TODO: change algorithm to avoid resetting strength when tile disappear
     pub fn handle_click(
         &mut self,
         coords: AxialCoords,
@@ -138,45 +135,52 @@ impl GameData {
 
                     // **Step 1**: Process tiles of the former owner (if any)
                     if let Some(former_owner_id) = current_owner.clone() {
-                        for (adjacent_coords, adjacent_tile) in
+                        log::info!("Gonna update tiles of user({})", former_owner_id);
+
+                        for (former_owner_tile_coords, former_owner_tile) in
                             self.contiguous_neighboors_of_tile(&coords, &former_owner_id, 2)
                         {
-                            let strength = self
-                                .contiguous_neighboors_of_tile(
-                                    &adjacent_coords,
-                                    &former_owner_id,
-                                    2,
-                                )
-                                .len() as u8;
+                            let strength = former_owner_tile.strength - 1;
+
+                            log::info!(
+                                "Update former owner tile at {:?} with {:?} strength",
+                                coords,
+                                strength
+                            );
 
                             let new_tile = TileData {
                                 strength,
-                                user_id: adjacent_tile.user_id.clone(),
+                                user_id: former_owner_tile.user_id.clone(),
                             };
-                            self.insert(adjacent_coords, new_tile.clone());
-                            updated_tiles.push((adjacent_coords, new_tile));
+                            self.insert(former_owner_tile_coords, new_tile.clone());
+                            updated_tiles.push((former_owner_tile_coords, new_tile));
                         }
                     }
-
+                    let mut new_strength = 1;
                     // **Step 2**: Process tiles of the new owner (this will include clicked tile)
                     for (click_user_tile_coords, click_user_tile) in
                         self.contiguous_neighboors_of_tile(&coords, click_user_id, 2)
                     {
-                        // recompute strength at this point
-                        let strength = self
-                            .contiguous_neighboors_of_tile(
-                                &click_user_tile_coords,
-                                &click_user_id,
-                                2,
-                            )
-                            .len() as u8;
-                        let new_tile = TileData {
-                            strength,
-                            user_id: click_user_tile.user_id.clone(),
-                        };
-                        self.insert(click_user_tile_coords, new_tile.clone());
-                        updated_tiles.push((click_user_tile_coords, new_tile));
+                        // avoid to change created tile here
+                        if click_user_tile_coords != coords {
+                            new_strength += 1;
+                            // recompute strength at this point
+
+                            let new_tile = TileData {
+                                strength: click_user_tile.strength + 1,
+                                user_id: click_user_tile.user_id.clone(),
+                            };
+                            self.insert(click_user_tile_coords, new_tile.clone());
+                            updated_tiles.push((click_user_tile_coords, new_tile));
+                        }
                     }
+                    let new_tile = TileData {
+                        strength: new_strength,
+                        user_id: Some(click_user_id.to_string()),
+                    };
+                    // update clicked tile strength
+                    self.insert(coords, new_tile.clone());
+                    updated_tiles.push((coords, new_tile));
                 } else {
                     // Update current tile without changing ownership, not yet "destroyed"
                     // but with lowered strength

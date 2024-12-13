@@ -1,4 +1,5 @@
 import { GameData, AxialCoords, CoordsAndTile, User } from "./types";
+import { webSocketHandler, WebSocketHandlersParams } from "./websocket";
 
 export type GameApi = ReturnType<typeof initApi>;
 
@@ -9,7 +10,9 @@ interface LocalGameState {
 }
 
 export function initApi() {
-  const fullUrl = (path: string) => `http://localhost:8080${path}`;
+  const host = (path: string) => `localhost:8080${path}`;
+
+  const fullUrl = (path: string) => `http://${host(path)}`;
 
   // TODO: store & restore from localStorage
   // state
@@ -58,12 +61,18 @@ export function initApi() {
 
     const user = await response.json();
 
+    state.users.push(user);
     state.user = user;
 
     return user as User;
   };
 
+  function configureWebSocket(params: WebSocketHandlersParams): WebSocket {
+    return webSocketHandler(`ws://${host("/ws")}`, params);
+  }
+
   return {
+    configureWebSocket,
     fetchGameData,
     clickAt,
     login,

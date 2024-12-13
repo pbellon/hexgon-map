@@ -1,9 +1,18 @@
 import { initApi } from "./api";
-import { login } from "./login";
+import { login, setLoading } from "./login";
 import { render } from "./render";
 
-const api = initApi();
+(async () => {
+  const api = initApi();
 
-login(api, async (gameData) => {
-  render(gameData, api);
-});
+  setLoading(true);
+
+  const gameData = await api.fetchGameData();
+
+  setLoading(false);
+
+  login(api, () => {
+    setLoading(false);
+    render(gameData, api);
+  });
+})();

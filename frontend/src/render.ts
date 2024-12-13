@@ -1,9 +1,6 @@
 import {
   AmbientLight,
-  Color,
   DirectionalLight,
-  ExtrudeGeometry,
-  ExtrudeGeometryOptions,
   Group,
   Mesh,
   MeshPhongMaterial,
@@ -11,102 +8,15 @@ import {
   PerspectiveCamera,
   Raycaster,
   Scene,
-  Shape,
   Vector2,
   WebGLRenderer,
 } from "three";
-import {
-  axialToPixel,
-  generateHexCoordinates,
-  getTileName,
-  ownerOf,
-  tileAt,
-  tileOpacity,
-} from "./grid";
-import { GameData, AxialCoords, OnClickCallback, WithCallback } from "./types";
+import { getTileName, ownerOf } from "./grid";
+import { GameData, AxialCoords, WithCallback } from "./types";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { initApi } from "./api";
-import { HEX_COLOR, HEX_DEPTH, HEX_SIZE, HEX_SPACING } from "./constants";
-
-const BASE_COLOR = new Color(HEX_COLOR);
-
-function hexagonColor(color: string, strength: number): Color {
-  const hex = parseInt(color.slice(1), 16);
-  const tColor = new Color(hex);
-  const opacity = tileOpacity(strength);
-  console.log(`opacity(${strength}) => ${opacity}`);
-  return BASE_COLOR.clone().lerp(tColor, opacity);
-}
-
-export function createHexagon(
-  size: number,
-  color: string,
-  strength: number,
-  depth: number
-): Mesh {
-  const shape = new Shape();
-  for (let i = 0; i < 6; i++) {
-    const angle = (Math.PI / 3) * i - Math.PI / 6; // 30° offset for pointy tops
-    const x = size * Math.cos(angle);
-    const y = size * Math.sin(angle);
-    if (i === 0) {
-      shape.moveTo(x, y);
-    } else {
-      shape.lineTo(x, y);
-    }
-  }
-  shape.closePath();
-
-  const extrudeSettings: ExtrudeGeometryOptions = {
-    depth, // Height of the hexagon
-    bevelSize: 1, // How much to bevel inward
-    bevelSegments: 2, // Smoothness of the bevel
-    bevelThickness: 1, // How "deep" the bevel is
-    bevelEnabled: true, // No bevel for flat surfaces
-  };
-
-  const geometry = new ExtrudeGeometry(shape, extrudeSettings);
-  geometry.translate(0, 0, -depth / 2); // Center vertically
-
-  const material = new MeshPhongMaterial({
-    color: strength > 0 ? hexagonColor(color, strength) : BASE_COLOR,
-    shininess: 25,
-    specular: 0xcccccc,
-  });
-  return new Mesh(geometry, material);
-}
-
-export function createHexMap(data: GameData, onClick: OnClickCallback): Group {
-  const hexGroup = new Group();
-  const coordinates = generateHexCoordinates(data.settings.radius);
-
-  coordinates.forEach((coords) => {
-    let color = HEX_COLOR;
-    let strength = 0;
-
-    let tile = tileAt(data, coords);
-
-    // should have corresponding user
-    if (tile && tile.user_id) {
-      const user = ownerOf(data, tile);
-      color = user.color;
-      strength = tile.strength;
-    }
-
-    const { x, y } = axialToPixel(coords, HEX_SIZE + HEX_SPACING);
-    const hex = createHexagon(HEX_SIZE, color, strength, HEX_DEPTH); // Default color
-
-    hex.position.set(x, y, 0);
-    hex.userData = coords; // Attach cube coordinates to hex
-    (hex as WithCallback<typeof hex>).onClick = onClick;
-
-    hex.name = getTileName(coords);
-
-    hexGroup.add(hex);
-  });
-
-  return hexGroup;
-}
+import { createHexMap } from "./shapes";
+import { hexagonColor } from "./colors";
 
 export function handleHexInteraction(
   camera: PerspectiveCamera,
@@ -208,142 +118,31 @@ export async function render(
 
   animate();
 
-  function handeTileChange(data: Uint8Array) {
-    const view = new DataView(data.buffer);
-    // Process the binary data (for example, extracting coordinates and tile data)
-    const q = view.getInt32(1, true); // Read the q value (i32)
-    const r = view.getInt32(5, true); // Read the r value (i32)
-    const strength = data[9]; // Read the strength (u8)
-    const userIdLength = data[10]; // Read the user ID length (u8)
-
-    // Read the user ID
-    let userId = "";
-    if (userIdLength > 0) {
-      userId = new TextDecoder().decode(data.slice(11, 11 + userIdLength));
-    }
-
-    console.log("[ws/handleTileChange]", {
-      q,
-      r,
-      strength,
-      userId,
-    });
-
-    const hex = hexMap.getObjectByName(getTileName({ q, r })) as Mesh;
-    if (hex) {
-      let user;
-      try {
-        user = gameData.users.find(({ id }) => id === userId);
-        console.log({
-          user,
-          users: [...gameData.users.map((u) => ({ ...u }))],
-        });
-        if (user) {
-          (hex.material as MeshPhongMaterial).color.set(
-            hexagonColor(user.color, strength)
+  api.configureWebSocket({
+    onNewUser: (user) => {
+      gameData.users.push(user);
+    },
+    onTileChange: (coords, tile) => {
+      const hex = hexMap.getObjectByName(getTileName(coords)) as Mesh;
+      if (hex) {
+        try {
+          const user = ownerOf(gameData, tile);
+          if (user) {
+            (hex.material as MeshPhongMaterial).color.set(
+              hexagonColor(user.color, tile.strength)
+            );
+          }
+        } catch (e) {
+          console.error(
+            `Did not found user for ${tile.user_id} ID`,
+            gameData.users,
+            e
           );
+          // fail silently
         }
-      } catch (e) {
-        console.error(`Did not found user for ${userId} ID`, gameData.users, e);
-        // fail silently
       }
-    }
-  }
-
-  function handleNewUserMessage(data: Uint8Array) {
-    // Create a DataView instance for efficient reading of binary data
-    const view = new DataView(data.buffer);
-
-    // Index 1: length of the user ID (u8)
-    const idLength = view.getUint8(1);
-
-    // Index 2 to 2 + idLength: user ID bytes
-    const id = new TextDecoder().decode(data.slice(2, 2 + idLength));
-
-    // The next byte is the length of the user name (u8)
-    const usernameLength = data[2 + idLength]; // userName length comes after user ID
-
-    // Index 2 + idLength + 1 to 2 + idLength + usernameLength: user name bytes
-    const username = new TextDecoder().decode(
-      data.slice(3 + idLength, 3 + idLength + usernameLength)
-    );
-
-    // The next byte is the length of the user color (u8)
-    const colorLength = data[3 + idLength + usernameLength];
-
-    // Index 3 + idLength + usernameLength + 1 to 3 + idLength + usernameLength + colorLength: user color bytes
-    const color = new TextDecoder().decode(
-      data.slice(
-        4 + idLength + usernameLength,
-        4 + idLength + usernameLength + colorLength
-      )
-    );
-
-    console.log("[ws/handleNewUserMessage]", {
-      username, // please help me parse those
-      color,
-      id,
-    });
-
-    gameData.users.push({
-      username, // please help me parse those
-      color,
-      id,
-    });
-  }
-
-  function handleScoreChangeMessage(data: Uint8Array) {
-    // TODO
-  }
-
-  // WEBSOCKET
-  const socket = new WebSocket("ws://localhost:8080/ws"); // Adjust the URL if needed
-  socket.binaryType = "arraybuffer";
-
-  // Function to handle incoming messages
-  socket.addEventListener("message", (e) => {
-    console.log("Received message", e.data);
-
-    if (!(e.data instanceof ArrayBuffer)) {
-      return;
-    }
-
-    // Convert the ArrayBuffer into a byte array
-    const data = new Uint8Array(e.data);
-
-    // First byte is the message type
-    const messageType = data[0];
-
-    switch (messageType) {
-      case 0x01:
-        handeTileChange(data);
-        break;
-      case 0x02: // new player
-        handleNewUserMessage(data);
-        break;
-      case 0x03: // Score change message
-        handleScoreChangeMessage(data);
-        break;
-      // Other cases for different message types (e.g., player login)
-      default:
-        console.error("Unknown message type:", messageType);
-    }
+    },
   });
-
-  // Handle WebSocket errors
-  socket.onerror = function (error) {
-    console.error("WebSocket Error: ", error);
-  };
-
-  // Handle WebSocket connection open event
-  socket.onopen = function (event) {
-    console.log("WebSocket is open now.");
-  };
-
-  // Handle WebSocket connection close event
-  socket.onclose = function (event) {
-    console.log("WebSocket is closed now.");
-  };
 }
 
 // flow

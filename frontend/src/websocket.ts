@@ -21,8 +21,10 @@ export function webSocketHandler(
     let userId = "";
     if (userIdLength > 0) {
       userId = new TextDecoder().decode(data.slice(11, 11 + userIdLength));
-
-      onTileChange({ q, r }, { user_id: userId, strength });
+      const coords = { q, r };
+      const tile = { user_id: userId, strength };
+      console.log("[ws/handleTileChange]", { q, r, userId, strength });
+      onTileChange(coords, tile);
     }
   }
 

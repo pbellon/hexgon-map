@@ -85,18 +85,18 @@ export async function render(
     // TODO: compute strength localy based on current data
 
     // send data and reconcile after response
-    const updatedTiles = await api.clickAt(tileData);
+    await api.clickAt(tileData);
 
-    updatedTiles.forEach(([coords, tile]) => {
-      const hex = hexMap.getObjectByName(getTileName(coords)) as Mesh;
-      if (hex) {
-        // could break here
-        const owner = ownerOf(gameData, tile);
-        (hex.material as MeshPhongMaterial).color.set(
-          hexagonColor(owner.color, tile.strength)
-        );
-      }
-    });
+    // updatedTiles.forEach(([coords, tile]) => {
+    //   const hex = hexMap.getObjectByName(getTileName(coords)) as Mesh;
+    //   if (hex) {
+    //     // could break here
+    //     const owner = ownerOf(gameData, tile);
+    //     (hex.material as MeshPhongMaterial).color.set(
+    //       hexagonColor(owner.color, tile.strength)
+    //     );
+    //   }
+    // });
   });
 
   handleHexInteraction(camera, hexMap);

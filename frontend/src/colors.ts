@@ -5,8 +5,8 @@ import { HEX_COLOR } from "./constants";
 const BASE_COLOR = new Color(HEX_COLOR);
 
 const tileOpacity = linearScale({
-  domain: [1, 19],
-  range: [0.2, 1],
+  domain: [0, 19],
+  range: [0.25, 1],
 });
 
 export function hexagonColor(color: string, strength: number): Color {
@@ -17,5 +17,6 @@ export function hexagonColor(color: string, strength: number): Color {
   const hex = parseInt(color.slice(1), 16);
   const tColor = new Color(hex);
   const opacity = tileOpacity(strength);
-  return BASE_COLOR.clone().lerp(tColor, opacity);
+  // console.log(`opacity(${strength}) => ${opacity}`);
+  return new Color().lerpColors(BASE_COLOR, tColor, opacity);
 }

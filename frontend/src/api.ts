@@ -33,6 +33,7 @@ export function initApi() {
   };
 
   const clickAt = async (coords: AxialCoords): Promise<CoordsAndTile[]> => {
+    console.log("[api/clickAt]", coords);
     if (state.user) {
       const response = await fetch(fullUrl(`/tile/${coords.q}/${coords.r}`), {
         method: "POST",

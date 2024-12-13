@@ -109,23 +109,14 @@ impl AxialCoords {
 // implement hash for storage in HashMap
 impl Hash for AxialCoords {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        let mut int_hasher = DefaultHasher::new();
-
-        // Compute individual hashes for q and r
-        self.q.hash(&mut int_hasher);
-        let hq = int_hasher.finish();
-        int_hasher = DefaultHasher::new(); // Reset the hasher for `r`
-        self.r.hash(&mut int_hasher);
-        let hr = int_hasher.finish();
-
-        // Combine the hashes using the same logic
-        let combined_hash = hq
-            ^ (hr
+        // Combine `q` and `r` into the state directly with a mix formula
+        let combined_hash = self.q as u64
+            ^ ((self.r as u64)
                 .wrapping_add(0x9e3779b9)
-                .wrapping_add(hq << 6)
-                .wrapping_add(hq >> 2));
+                .wrapping_add((self.q as u64) << 6)
+                .wrapping_add((self.q as u64) >> 2));
 
-        // Feed the combined hash to the state
+        // Write the combined hash
         state.write_u64(combined_hash);
     }
 }

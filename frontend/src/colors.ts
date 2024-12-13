@@ -9,13 +9,12 @@ const tileOpacity = linearScale({
   range: [0.25, 1],
 });
 
-export function hexagonColor(color: string, strength: number): Color {
+export function hexagonColor(color: number, strength: number): Color {
   if (strength === 0) {
     return BASE_COLOR;
   }
 
-  const hex = parseInt(color.slice(1), 16);
-  const tColor = new Color(hex);
+  const tColor = new Color(color);
   const opacity = tileOpacity(strength);
   // console.log(`opacity(${strength}) => ${opacity}`);
   return new Color().lerpColors(BASE_COLOR, tColor, opacity);

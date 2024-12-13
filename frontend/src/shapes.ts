@@ -19,7 +19,7 @@ import { hexagonColor } from "./colors";
 
 export function createHexagon(
   size: number,
-  color: string,
+  color: number,
   strength: number,
   depth: number
 ): Mesh {
@@ -69,7 +69,7 @@ export function createHexMap(data: GameData, onClick: OnClickCallback): Group {
     // should have corresponding user
     if (tile && tile.user_id) {
       const user = ownerOf(data, tile);
-      color = user.color;
+      color = parseInt(user.color.slice(1), 16);
       strength = tile.strength;
     }
 

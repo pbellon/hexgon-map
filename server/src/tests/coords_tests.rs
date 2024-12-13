@@ -28,9 +28,9 @@ fn test_cube_ring() {
 #[test]
 fn test_coords_spiral() {
     let center = CubeCoords::new(0, 0, 0);
-    let result_one: Vec<CubeCoords> = cube_spiral(&center, 1, false);
-    let result_two = cube_spiral(&center, 2, false);
-    let result_three = cube_spiral(&center, 3, false);
+    let result_one: Vec<CubeCoords> = cube_spiral(&center, 1);
+    let result_two = cube_spiral(&center, 2);
+    let result_three = cube_spiral(&center, 3);
     assert!(
         result_one.len() == 6,
         "coords_range should return a vector with exactly 6 elements for a radius of 1"
@@ -42,7 +42,7 @@ fn test_coords_spiral() {
     );
 
     assert!(
-        result_two.len() == 36,
+        result_three.len() == 36,
         "coords_range should return a vector with exactly 18 elements for a radius of 2"
     );
 }

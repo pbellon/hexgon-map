@@ -12,7 +12,7 @@ use actix_web::web::{resource, Data, Json, Path};
 use actix_web::{get, post, App, HttpResponse, HttpServer, Responder};
 use coords::AxialCoords;
 use env_logger::Env;
-use game::GameData;
+use game::{create_benchmark_game_data, GameData};
 use serde::Deserialize;
 use std::sync::RwLock;
 use websocket::{
@@ -78,7 +78,7 @@ async fn register_user(
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(Env::default().default_filter_or("info"));
 
-    let initial_data = GameData::new(DEFAULT_GRID_RADIUS as i32);
+    let initial_data = create_benchmark_game_data(DEFAULT_GRID_RADIUS as i32);
     let data = Data::new(RwLock::new(initial_data));
 
     let clients: ClientList = init_clients();

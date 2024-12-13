@@ -45,7 +45,7 @@ impl InnerTileData {
 
 pub type TileMap = HashMap<AxialCoords, InnerTileData>;
 
-#[derive(Serialize, Debug, Clone)]
+#[derive(Copy, Serialize, Debug, Clone)]
 pub struct GridSettings {
     pub radius: i32,
 }

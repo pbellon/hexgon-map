@@ -157,14 +157,6 @@ impl GameData {
                     remaining_strength = 0;
                 }
 
-                log::info!(
-                    "Remaining strength calculus at {:?} -> 1 + {} - {} => {}",
-                    coords,
-                    nb_neighboors,
-                    damage,
-                    remaining_strength
-                );
-
                 // Handle the tile change in ownership
                 if remaining_strength == 0 {
                     let new_tile = InnerTileData {
@@ -178,8 +170,6 @@ impl GameData {
 
                     // 1 => Append former owner's contiguous tiles for client notification, strength will be recomputed at the end
                     if let Some(former_owner_id) = current_tile.user_id.clone() {
-                        log::info!("Gonna update tiles of user({})", former_owner_id);
-
                         updated_tiles.append(&mut self.contiguous_neighboors_of_tile(
                             &coords,
                             &former_owner_id,
@@ -195,7 +185,6 @@ impl GameData {
                     ));
                 } else {
                     let new_damage = current_tile.damage + 1;
-                    log::info!("New tile damage at {:?} => {}", coords, new_damage);
                     // Update current tile without changing ownership, not yet "destroyed"
                     // but with augmented damage
                     let new_tile = InnerTileData {

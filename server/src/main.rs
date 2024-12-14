@@ -98,7 +98,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_game_data)
             .service(register_user)
             .service(resource("/ws").to(ws_handler))
-            .wrap(Compress::default())
+            // .wrap(Compress::default())
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
     })

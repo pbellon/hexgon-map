@@ -67,6 +67,18 @@ pub fn cube_ring(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
     results
 }
 
+pub fn direct_neighbors(center: &CubeCoords) -> [CubeCoords; 6] {
+    let mut results = [CubeCoords::center(); 6];
+    let mut coords = cube_add(center, &cube_scale(&cube_direction(4), 1));
+
+    for i in 0..6 {
+        results[i] = coords;
+        coords = cube_neighbor(&coords, i)
+    }
+
+    results
+}
+
 /**
  * Does not include center countrary to red blob games' implementation
  */

@@ -1,0 +1,11 @@
+services:
+  rust-app:
+    build: .
+    container_name: pixelwar_backend_container
+    ports:
+      - "8080:8080" # Expose the port if your app needs it
+    volumes:
+      - .:/app # Mount the current directory to /app inside the container for hot-reloading
+    environment:
+      - RUST_LOG=debug
+    command: ./pixelstratwar_backend

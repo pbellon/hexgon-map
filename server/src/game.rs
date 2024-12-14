@@ -7,7 +7,7 @@ use std::{
 use serde::Serialize;
 
 use crate::{
-    coords::{cube_ring, cube_spiral, direct_neighbors, AxialCoords, CubeCoords},
+    coords::{cube_spiral, direct_neighbors, AxialCoords, CubeCoords},
     grid::{generate_tilemap, GridSettings, InnerTileData, TileData, TileMap},
     user::{PublicUser, User},
 };
@@ -186,17 +186,19 @@ impl GameData {
 
         // If the tile exists
         if let Some(current_tile) = self.get(&coords).cloned() {
+            let mut new_tile = current_tile.clone();
+
             let mut nb_neighboors = 0;
             let mut damage = current_tile.damage as i8;
 
-            if let Some(current_tile_owner) = current_tile.user_id.clone() {
+            if let Some(current_tile_owner) = current_tile.user_id.as_deref() {
                 nb_neighboors = self
                     .contiguous_neighboors_of_tile(coords, &current_tile_owner, 2)
                     .1 as i8;
             }
 
             // If the tile is not owned by the clicking user
-            if current_tile.user_id.clone() != Some(click_user_id.to_string()) {
+            if current_tile.user_id.as_deref() != Some(click_user_id) {
                 // raise damage only if on a tile owned by another user,
                 // do that to avoid issue with remaining_strength calculus below
                 let remaining_strength: i8;
@@ -212,14 +214,11 @@ impl GameData {
 
                 // Handle the tile change in ownership
                 if remaining_strength == 0 {
-                    let new_tile = InnerTileData {
-                        user_id: Some(click_user_id.to_string()),
-                        damage: 0,
-                    };
+                    new_tile.user_id = Some(click_user_id.to_string());
+                    new_tile.damage = 0;
 
                     // 0 => Directly insert tile with new user_id to ease strength computing below
                     self.insert(coords.clone(), new_tile.clone());
-                    updated_tiles.push((*coords, new_tile));
 
                     // 1 => Append former owner's contiguous tiles for client notification, strength will be recomputed at the end
                     if let Some(former_owner_id) = current_tile.user_id.clone() {
@@ -245,27 +244,21 @@ impl GameData {
                             .collect(),
                     );
                 } else {
-                    let new_damage = current_tile.damage + 1;
                     // Update current tile without changing ownership, not yet "destroyed"
                     // but with augmented damage
-                    let new_tile = InnerTileData {
-                        damage: new_damage,
-                        user_id: current_tile.user_id.clone(),
-                    };
+                    new_tile.damage += 1;
                     self.insert(*coords, new_tile.clone());
-
-                    updated_tiles.push((coords.clone(), new_tile));
                 }
             } else {
                 // => checking if diminish damage, in other word we "heal" the tile
                 if current_tile.damage > 0 {
-                    let new_tile = InnerTileData {
-                        damage: current_tile.damage - 1,
-                        user_id: current_tile.user_id.clone(),
-                    };
-                    self.insert(coords.clone(), new_tile.clone());
-                    updated_tiles.push((*coords, new_tile));
+                    new_tile.damage -= 1;
+                    self.insert(*coords, new_tile.clone());
                 }
+            }
+            // append new_tile to updated tiles if changed
+            if new_tile.damage != current_tile.damage || new_tile.user_id != current_tile.user_id {
+                updated_tiles.push((*coords, new_tile))
             }
         }
 

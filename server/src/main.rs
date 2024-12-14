@@ -6,10 +6,10 @@ mod websocket;
 
 #[cfg(test)]
 mod tests;
-
+use actix_cors::Cors;
 use actix_web::middleware::{Compress, Logger};
 use actix_web::web::{resource, Data, Json, Path};
-use actix_web::{get, post, App, HttpResponse, HttpServer, Responder};
+use actix_web::{get, http, post, App, HttpResponse, HttpServer, Responder};
 use coords::AxialCoords;
 use env_logger::Env;
 use game::{create_benchmark_game_data, GameData};
@@ -76,11 +76,18 @@ async fn register_user(
     HttpResponse::Ok().json(user)
 }
 
+fn cors_middleware() -> Cors {
+    Cors::default()
+        .allowed_methods(vec!["GET", "POST"])
+        .allowed_origin("http://localhost:5173")
+        .allowed_headers(vec![http::header::ACCEPT, http::header::CONTENT_TYPE])
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     env_logger::init_from_env(Env::default().default_filter_or("info"));
-
     let initial_data = create_benchmark_game_data(DEFAULT_GRID_RADIUS as i32);
+    // let initial_data = GameData::new(DEFAULT_GRID_RADIUS as i32);
     let data = Data::new(RwLock::new(initial_data));
 
     let clients: ClientList = init_clients();
@@ -100,9 +107,10 @@ async fn main() -> std::io::Result<()> {
             .service(resource("/ws").to(ws_handler))
             // .wrap(Compress::default())
             .wrap(Logger::default())
+            .wrap(cors_middleware())
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("0.0.0.0", 8080))?
     .run()
     .await
 }

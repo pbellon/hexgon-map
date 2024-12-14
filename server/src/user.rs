@@ -39,8 +39,11 @@ fn color_to_hex(color: (u8, u8, u8)) -> String {
 
 impl User {
     pub fn new(username: String) -> Self {
+        let uuid = Uuid::new_v4();
+        let encoded_id = base62::encode(uuid.as_u128());
+
         Self {
-            id: Uuid::new_v4().into(),
+            id: encoded_id,
             username: username.clone(),
             color: color_to_hex(string_to_color(username)),
         }

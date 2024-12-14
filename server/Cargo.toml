@@ -16,6 +16,7 @@ async-std = "1.13.0"
 actix = "0.13.5"
 log = "0.4.22"
 bytes = "1.9.0"
+base62 = "2.0.3"
 
 [dependencies.uuid]
 version = "1.11.0"

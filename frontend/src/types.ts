@@ -42,6 +42,12 @@ export interface GameData {
   tiles: CoordsAndTile[];
 }
 
+export interface ApiGameData {
+  settings: GameSettings;
+  users: User[];
+  tiles: [q: number, r: number, strength: number, userId: string | undefined][];
+}
+
 export interface Tile {
   user_id: string | undefined;
   strength: number;

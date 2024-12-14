@@ -7,7 +7,7 @@ mod websocket;
 #[cfg(test)]
 mod tests;
 
-use actix_web::middleware::Logger;
+use actix_web::middleware::{Compress, Logger};
 use actix_web::web::{resource, Data, Json, Path};
 use actix_web::{get, post, App, HttpResponse, HttpServer, Responder};
 use coords::AxialCoords;
@@ -51,7 +51,9 @@ async fn post_tile(
 async fn get_game_data(app_data: Data<RwLock<GameData>>) -> impl Responder {
     let store = app_data.read().unwrap();
 
-    HttpResponse::Ok().json(store.as_public())
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .json(store.as_public())
 }
 
 #[derive(Deserialize)]
@@ -96,6 +98,7 @@ async fn main() -> std::io::Result<()> {
             .service(get_game_data)
             .service(register_user)
             .service(resource("/ws").to(ws_handler))
+            .wrap(Compress::default())
             .wrap(Logger::default())
             .wrap(Logger::new("%a %{User-Agent}i"))
     })

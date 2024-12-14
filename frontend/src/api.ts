@@ -1,4 +1,10 @@
-import { GameData, AxialCoords, CoordsAndTile, User } from "./types";
+import {
+  GameData,
+  AxialCoords,
+  CoordsAndTile,
+  User,
+  ApiGameData,
+} from "./types";
 import { webSocketHandler, WebSocketHandlersParams } from "./websocket";
 
 export type GameApi = ReturnType<typeof initApi>;
@@ -24,12 +30,23 @@ export function initApi() {
 
   const fetchGameData = async (): Promise<GameData> => {
     const response = await fetch(fullUrl("/data"), { method: "get" });
-    const data = (await response.json()) as GameData;
+    const data = (await response.json()) as ApiGameData;
 
-    state.tiles = data.tiles;
+    let gameData = {
+      ...data,
+      tiles: data.tiles.map(
+        ([q, r, strength, user_id]) =>
+          [
+            { q, r },
+            { strength, user_id },
+          ] as CoordsAndTile
+      ),
+    };
+
+    state.tiles = gameData.tiles;
     state.users = data.users;
 
-    return data;
+    return gameData;
   };
 
   const clickAt = async (coords: AxialCoords): Promise<CoordsAndTile[]> => {

@@ -11,7 +11,7 @@ use crate::{
 #[derive(Serialize, Debug, Clone)]
 pub struct PublicGameData {
     settings: GridSettings,
-    tiles: Vec<(AxialCoords, TileData)>,
+    tiles: Vec<(i32, i32, u8, Option<String>)>,
     users: Vec<PublicUser>,
 }
 
@@ -75,7 +75,10 @@ impl GameData {
             tiles: self
                 .tiles
                 .iter()
-                .map(|(coords, tile)| (*coords, self.computed_tile(coords, tile)))
+                .map(|(coords, tile)| {
+                    let computed = self.computed_tile(coords, tile);
+                    (coords.q, coords.r, computed.strength, computed.user_id)
+                })
                 .collect(),
             users: self.users.iter().map(|u| u.as_public()).collect(),
             settings: self.settings.clone(),

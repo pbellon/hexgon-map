@@ -1,9 +1,12 @@
-use std::{cmp::max, collections::HashMap};
+use std::{
+    cmp::max,
+    collections::{HashMap, HashSet},
+};
 
 use serde::Serialize;
 
 use crate::{
-    coords::{cube_ring, AxialCoords},
+    coords::{cube_ring, cube_spiral, AxialCoords, CubeCoords},
     grid::{generate_tilemap, GridSettings, InnerTileData, TileData, TileMap},
     user::{PublicUser, User},
 };
@@ -17,6 +20,7 @@ pub struct PublicGameData {
 
 #[derive(Serialize, Debug, Clone)]
 pub struct GameData {
+    precomputed_neighbors: HashMap<AxialCoords, Vec<AxialCoords>>,
     pub tiles: TileMap,
     pub settings: GridSettings,
     pub users: Vec<User>,
@@ -38,6 +42,27 @@ pub fn create_benchmark_game_data(radius: i32) -> GameData {
     }
 
     data
+}
+
+pub fn is_within_grid(coords: AxialCoords, radius: i32) -> bool {
+    coords.q >= -radius && coords.q <= radius && coords.r >= -radius && coords.r <= radius
+}
+pub fn precompute_neighboors(radius: i32) -> HashMap<AxialCoords, Vec<AxialCoords>> {
+    cube_spiral(&CubeCoords::center(), radius)
+        .iter()
+        .map(|coords| {
+            (
+                coords.as_axial(),
+                cube_ring(&coords, 1)
+                    .iter()
+                    .filter_map(|cc| {
+                        let ac = cc.as_axial();
+                        is_within_grid(ac, radius).then(|| ac)
+                    })
+                    .collect(),
+            )
+        })
+        .collect()
 }
 
 impl GameData {
@@ -86,10 +111,14 @@ impl GameData {
     }
 
     pub fn new(radius: i32) -> Self {
+        let tiles = generate_tilemap(radius);
+        let precomputed_neighbors = precompute_neighboors(radius);
+
         Self {
             settings: GridSettings { radius },
-            tiles: generate_tilemap(radius),
+            tiles,
             users: Vec::new(),
+            precomputed_neighbors,
         }
     }
 
@@ -110,32 +139,35 @@ impl GameData {
         user_id: &str,
         radius: u8,
     ) -> Vec<(AxialCoords, InnerTileData)> {
-        let mut processed_map: HashMap<AxialCoords, bool> = HashMap::new();
+        let mut processed_set: HashSet<AxialCoords> = HashSet::new();
         let mut results = Vec::new();
-        let user_id_str = user_id.to_string();
-        let mut to_check = vec![tile_coords.clone()];
+        let mut to_check = vec![*tile_coords];
 
         for _ in 0..radius {
             let mut next_to_check = Vec::new();
 
             // Temporarily take the value of `to_check` to avoid the borrowing issue
-            for coords_to_check in std::mem::take(&mut to_check) {
-                let ring = cube_ring(&coords_to_check.as_cube(), 1);
-
-                for rc in ring {
-                    // exclude given `tile_coords` out of results
-                    if rc.as_axial() != *tile_coords {
-                        if let Some(tile) = self.tiles.get(&rc.as_axial()) {
-                            if tile.user_id == Some(user_id_str.clone()) {
-                                let axial_coords = rc.as_axial();
-                                if processed_map.get(&axial_coords).is_none() {
-                                    next_to_check.push(axial_coords);
-                                    results.push((axial_coords, tile.clone()));
-                                    processed_map.insert(axial_coords, true);
+            for coords_to_check in to_check.drain(..) {
+                if let Some(ring) = self.precomputed_neighbors.get(&coords_to_check) {
+                    next_to_check.extend(
+                        ring.iter()
+                            .filter(|rc| rc != &tile_coords) // skip given tile coords
+                            .filter_map(|rc| {
+                                if let Some(tile) = self.tiles.get(&rc) {
+                                    if tile.user_id.as_deref() == Some(user_id)
+                                        && !processed_set.contains(rc)
+                                    {
+                                        processed_set.insert(*rc);
+                                        results.push((*rc, tile.clone()));
+                                        Some(*rc)
+                                    } else {
+                                        None
+                                    }
+                                } else {
+                                    None
                                 }
-                            }
-                        }
-                    }
+                            }),
+                    );
                 }
             }
             to_check = next_to_check;

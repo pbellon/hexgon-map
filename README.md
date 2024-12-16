@@ -17,18 +17,25 @@
   - [x] 5. if not logged (or kicked out) let user enters its information (if not previously logged and
        token did not expired)
 - [ ] enforce `GameData::handle_click` algo by adding strong unit tests
+- [ ] create new `GET /users` endpoint and use it
+- [ ] create new `GET /settings` endpoint and use it
+- [ ] create new `GET /tiles?batch={n}` endpoint and use it
+      => split the grid in batches (10 ?) to avoid fetching the grid all at once
+- [ ] no need to wait for the whole grid to load before rendering
 - [ ] (front) improve state management, we need a single source of truth
 - [ ] (front+back) handle user scores
-- [ ] (back) reduce user ID size if possible?
+- [x] (back) reduce user ID size if possible?
 - [ ] (back) make color more random (use generated uuid ?)
 
-- [ ] (front+backend) handle token-based registration and token expiration that will be helpful to
+- [x] (front+backend) handle token-based auth
+- [ ] and token expiration that will be helpful to
       clean the map from inactive users (maybe start with 1h validity => after one hour of
       inactivity you must log again)
 - [ ] (front+back) handle user clean (when kicked out after inactivity)
 - [ ] (front/api.ts) handle localStorage to avoid losing auth
-- [ ] benchmark lots of concurrent users to see how things behave
-- [ ] see what broke
+- [x] benchmark lots of concurrent users to see how things behave
+- [x] see what broke
+      -> `GET /data`, pète fort
 - [ ] add credits where due
       -> Thanks ThreeJS for the wonderful lib
       -> Thanks Red Blob games for the algorithms

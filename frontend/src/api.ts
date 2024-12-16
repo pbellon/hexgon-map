@@ -28,6 +28,10 @@ export function initApi() {
     users: [],
   };
 
+  function getAuth(user: User): string {
+    return btoa(`${user.id}:${user.token}`);
+  }
+
   const fetchGameData = async (): Promise<GameData> => {
     const response = await fetch(fullUrl("/data"), { method: "get" });
     const data = (await response.json()) as ApiGameData;
@@ -51,14 +55,21 @@ export function initApi() {
 
   const clickAt = async (coords: AxialCoords): Promise<CoordsAndTile[]> => {
     console.log("[api/clickAt]", coords);
-    if (state.user) {
+    if (state.user != null) {
+      const headers = {
+        Authorization: `Basic ${getAuth(state.user)}`,
+        "content-type": "application/json",
+      };
+
+      console.log(headers);
+
       const response = await fetch(fullUrl(`/tile/${coords.q}/${coords.r}`), {
         method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
+        headers,
         body: state.user.id,
       });
+
+      console.log("Tu finis un jour ouuuuuuuu?");
 
       return (await response.json()) as CoordsAndTile[];
     }

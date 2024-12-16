@@ -22,6 +22,7 @@ export type WithCallback<T> = T & { onClick: OnClickCallback };
 
 export interface User {
   username: string;
+  token: string;
   color: string;
   id: string;
 }

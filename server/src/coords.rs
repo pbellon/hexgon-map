@@ -1,4 +1,7 @@
-use std::hash::{Hash, Hasher};
+use std::{
+    collections::HashMap,
+    hash::{Hash, Hasher},
+};
 
 use serde::{Deserialize, Serialize};
 
@@ -125,4 +128,30 @@ impl Hash for AxialCoords {
         // Write the combined hash
         state.write_u64(combined_hash);
     }
+}
+
+pub fn is_within_grid(coords: AxialCoords, radius: i32) -> bool {
+    coords.q >= -radius && coords.q <= radius && coords.r >= -radius && coords.r <= radius
+}
+
+pub type PrecomputedNeighbors = HashMap<AxialCoords, [Option<AxialCoords>; 6]>;
+
+pub fn compute_neighboors(radius: i32) -> PrecomputedNeighbors {
+    cube_spiral(&CubeCoords::center(), radius)
+        .iter()
+        .map(|coords| {
+            let mut results = [None; 6]; // Use an array of Option<AxialCoords>
+            let mut index = 0;
+
+            for cc in direct_neighbors(&coords).iter() {
+                let ac = cc.as_axial();
+                if is_within_grid(ac, radius) {
+                    results[index] = Some(ac);
+                    index += 1;
+                }
+            }
+
+            (coords.as_axial(), results)
+        })
+        .collect()
 }

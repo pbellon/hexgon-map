@@ -1,26 +1,27 @@
+mod config;
 mod coords;
 mod game;
 mod grid;
 mod user;
+mod utils;
 mod websocket;
 
 #[cfg(test)]
 mod tests;
 use actix_cors::Cors;
-use actix_web::middleware::{Compress, Logger};
+use actix_web::middleware::Logger;
 use actix_web::web::{resource, Data, Json, Path};
 use actix_web::{get, http, post, App, HttpResponse, HttpServer, Responder};
+use config::GameConfig;
 use coords::AxialCoords;
 use env_logger::Env;
-use game::{create_benchmark_game_data, GameData};
+use game::GameData;
 use serde::Deserialize;
 use std::sync::RwLock;
 use websocket::{
     init_clients, notify_new_user, notify_score_change, tile_change_message, ws_handler,
     ClientList, MyBinaryMessage,
 };
-
-const DEFAULT_GRID_RADIUS: u8 = 80;
 
 #[post("/tile/{q}/{r}")]
 async fn post_tile(
@@ -76,19 +77,22 @@ async fn register_user(
     HttpResponse::Ok().json(user)
 }
 
-fn cors_middleware() -> Cors {
+fn cors_middleware(app_config: &GameConfig) -> Cors {
     Cors::default()
         .allowed_methods(vec!["GET", "POST"])
-        .allowed_origin("http://localhost:5173")
+        .allowed_origin(&app_config.front_end_url)
         .allowed_headers(vec![http::header::ACCEPT, http::header::CONTENT_TYPE])
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    let app_config = GameConfig::read_config_from_env();
+
     env_logger::init_from_env(Env::default().default_filter_or("info"));
-    let initial_data = create_benchmark_game_data(DEFAULT_GRID_RADIUS as i32);
-    // let initial_data = GameData::new(DEFAULT_GRID_RADIUS as i32);
-    let data = Data::new(RwLock::new(initial_data));
+
+    let game_data = GameData::init_from_config(&app_config);
+
+    let data = Data::new(RwLock::new(game_data));
 
     let clients: ClientList = init_clients();
 
@@ -101,13 +105,14 @@ async fn main() -> std::io::Result<()> {
         App::new()
             .app_data(data.clone())
             .app_data(Data::new(clients.clone()))
+            .app_data(app_config.clone())
             .service(post_tile)
             .service(get_game_data)
             .service(register_user)
             .service(resource("/ws").to(ws_handler))
             // .wrap(Compress::default())
             .wrap(Logger::default())
-            .wrap(cors_middleware())
+            .wrap(cors_middleware(&app_config))
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
     .bind(("0.0.0.0", 8080))?

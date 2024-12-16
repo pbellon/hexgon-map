@@ -1,15 +1,16 @@
 use std::{
     cmp::max,
     collections::{HashMap, HashSet},
-    ops::Deref,
 };
 
 use serde::Serialize;
 
 use crate::{
+    config::GameConfig,
     coords::{cube_spiral, direct_neighbors, AxialCoords, CubeCoords},
     grid::{generate_tilemap, GridSettings, InnerTileData, TileData, TileMap},
     user::{PublicUser, User},
+    utils::create_benchmark_game_data,
 };
 
 #[derive(Serialize, Debug, Clone)]
@@ -27,27 +28,10 @@ pub struct GameData {
     pub users: Vec<User>,
 }
 
-pub fn create_benchmark_game_data(radius: i32) -> GameData {
-    let mut data = GameData::new(radius);
-    let user = data.create_user("benchmark-user".to_string());
-    let keys: Vec<_> = data.tiles.keys().cloned().collect();
-
-    for coords in keys {
-        data.insert(
-            coords,
-            InnerTileData {
-                user_id: Some(user.id.clone()),
-                damage: 0,
-            },
-        );
-    }
-
-    data
-}
-
 pub fn is_within_grid(coords: AxialCoords, radius: i32) -> bool {
     coords.q >= -radius && coords.q <= radius && coords.r >= -radius && coords.r <= radius
 }
+
 pub fn precompute_neighboors(radius: i32) -> HashMap<AxialCoords, [Option<AxialCoords>; 6]> {
     cube_spiral(&CubeCoords::center(), radius)
         .iter()
@@ -69,6 +53,14 @@ pub fn precompute_neighboors(radius: i32) -> HashMap<AxialCoords, [Option<AxialC
 }
 
 impl GameData {
+    pub fn init_from_config(config: &GameConfig) -> Self {
+        if config.use_benchmark_data {
+            return create_benchmark_game_data(config.grid_radius as i32);
+        }
+
+        Self::new(config.grid_radius as i32)
+    }
+
     pub fn score_of_user(&self, user_id: &str) -> u32 {
         let user_id_owned = Some(user_id.to_string());
         let nb_tiles = self

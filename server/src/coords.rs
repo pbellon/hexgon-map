@@ -36,9 +36,10 @@ pub fn cube_add(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
     CubeCoords::new(a.q + b.q, a.r + b.r, a.s + b.s)
 }
 
-// pub fn cube_substract(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
-//     CubeCoords::new(a.q - b.q, a.r - b.r, a.s - b.s)
-// }
+#[allow(dead_code)]
+pub fn cube_substract(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
+    CubeCoords::new(a.q - b.q, a.r - b.r, a.s - b.s)
+}
 
 pub fn cube_scale(a: &CubeCoords, factor: i32) -> CubeCoords {
     CubeCoords::new(a.q * factor, a.r * factor, a.s * factor)
@@ -105,6 +106,7 @@ impl AxialCoords {
         Self { q, r }
     }
 
+    #[allow(dead_code)]
     pub fn as_cube(&self) -> CubeCoords {
         CubeCoords::new(self.q, self.r, -self.q - self.r)
     }

@@ -16,7 +16,7 @@ interface LocalGameState {
 }
 
 export function initApi() {
-  const host = (path: string) => `localhost:8080${path}`;
+  const host = (path: string) => `127.0.0.1:8080${path}`;
 
   const fullUrl = (path: string) => `http://${host(path)}`;
 

@@ -4,6 +4,8 @@ type OnLoggedSuccess = () => void;
 
 export function setLoading(loading = true) {
   const login = document.querySelector("#login");
+
+  login?.addEventListener("click", (e) => e.stopPropagation());
   if (loading) {
     login?.classList.add("loading");
   } else {

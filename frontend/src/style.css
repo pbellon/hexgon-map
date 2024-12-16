@@ -9,6 +9,7 @@
   transition: transform 0.5s ease;
   background-color: #bbb;
   z-index: 1000;
+  pointer-events: all;
 }
 
 #login.success {

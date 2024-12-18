@@ -89,10 +89,7 @@ impl StreamHandler<Result<WsMessage, ProtocolError>> for MyWebSocket {
 
 // Function to construct a binary message from AxialCoords and TileData (Message type: 0x01 for tile change)
 pub fn tile_change_message(coords: &AxialCoords, tile: &TileData) -> Vec<u8> {
-    let user_id_bytes = match &tile.user_id {
-        Some(id) => id.as_bytes(),
-        None => &[],
-    };
+    let user_id_bytes = tile.user_id.as_bytes();
 
     // Create a buffer with enough space to hold all the data
     let mut buffer = BytesMut::with_capacity(9 + user_id_bytes.len()); // 4 (q) + 4 (r) + 1 (strength) + user_id_length

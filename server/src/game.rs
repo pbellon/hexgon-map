@@ -1,4 +1,8 @@
-use std::{cmp::max, collections::HashSet, sync::Arc};
+use std::{
+    cmp::max,
+    collections::{HashMap, HashSet},
+    sync::Arc,
+};
 
 use ::futures::future;
 use serde::Serialize;
@@ -7,7 +11,7 @@ use tokio::sync::RwLock;
 use crate::{
     config::GameConfig,
     coords::{self, AxialCoords, PrecomputedNeighbors},
-    grid::{generate_tilemap, GridSettings, InnerTileData, TileData, TileMap},
+    grid::{GridSettings, InnerTileData, TileData, TileMap},
     user::{GameUsers, PublicUser},
     utils::create_benchmark_game_data,
 };
@@ -15,7 +19,7 @@ use crate::{
 #[derive(Serialize, Debug, Clone)]
 pub struct PublicGameData {
     settings: GridSettings,
-    tiles: Vec<(i32, i32, u8, Option<String>)>,
+    tiles: Vec<(i32, i32, u8, String)>,
     users: Vec<PublicUser>,
 }
 
@@ -42,10 +46,9 @@ impl GameData {
 
     pub async fn score_of_user(&self, user_id: &str) -> u32 {
         let tiles = self.tiles.read().await;
-        let user_id_owned = Some(user_id.to_string());
         let nb_tiles = tiles
             .iter()
-            .filter(|(_, tile)| tile.user_id == user_id_owned)
+            .filter(|(_, tile)| &tile.user_id == user_id)
             .count();
         nb_tiles as u32
     }
@@ -87,7 +90,7 @@ impl GameData {
 
                                 // Check if the tile belongs to the same user
                                 if let Some(tile) = tiles.get(&drc) {
-                                    if tile.user_id.as_deref() == Some(user_id) {
+                                    if tile.user_id == user_id {
                                         return Some(drc);
                                     }
                                 }
@@ -120,22 +123,15 @@ impl GameData {
     }
 
     pub async fn computed_tile(&self, coords: &AxialCoords, tile: &InnerTileData) -> TileData {
-        if let Some(user_id) = &tile.user_id {
-            let nb_neighboors = self
-                .contiguous_neighbors_of_tile(coords, &user_id, 2)
-                .await
-                .1;
-            let strength = 1 + nb_neighboors - tile.damage;
-
-            return TileData {
-                strength,
-                user_id: Some(user_id.to_string()),
-            };
-        }
+        let nb_neighboors = self
+            .contiguous_neighbors_of_tile(coords, &tile.user_id, 2)
+            .await
+            .1;
+        let strength = 1 + nb_neighboors - tile.damage;
 
         TileData {
-            strength: 0,
-            user_id: None,
+            strength,
+            user_id: tile.user_id.to_string(),
         }
     }
 
@@ -157,12 +153,11 @@ impl GameData {
     }
 
     pub fn new(radius: i32) -> Self {
-        let tiles = generate_tilemap(radius);
         let precomputed_neighbors = coords::compute_neighboors(radius);
 
         Self {
             settings: GridSettings { radius },
-            tiles: Arc::new(RwLock::new(tiles)),
+            tiles: Arc::new(RwLock::new(HashMap::new())),
             precomputed_neighbors,
         }
     }
@@ -179,96 +174,109 @@ impl GameData {
     ) -> Vec<(AxialCoords, TileData)> {
         let mut updated_tiles: Vec<(AxialCoords, InnerTileData)> = Vec::new();
 
-        // If the tile exists
+        // If the tile exists (aka is owned by someone)
         if let Some(current_tile) = self.get_tile(coords).await {
-            let mut new_tile = current_tile.clone();
+            let mut updated_tile = current_tile.clone();
 
-            let mut nb_neighboors = 0;
+            let nb_neighboors = self
+                .contiguous_neighbors_of_tile(coords, &current_tile.user_id, 2)
+                .await
+                .1 as i8;
+
             let mut damage = current_tile.damage as i8;
 
-            if let Some(current_tile_owner) = current_tile.user_id.as_deref() {
-                nb_neighboors = self
-                    .contiguous_neighbors_of_tile(coords, &current_tile_owner, 2)
-                    .await
-                    .1 as i8;
-            }
-
             // If the tile is not owned by the clicking user
-            if current_tile.user_id.as_deref() != Some(click_user_id) {
+            if current_tile.user_id != click_user_id {
                 // raise damage only if on a tile owned by another user,
                 // do that to avoid issue with remaining_strength calculus below
                 let remaining_strength: i8;
 
                 // log::info!("Tile clicked not owned by current user");
 
-                // when clicking on an owned tile => raise damage
-                if let Some(_) = current_tile.user_id.clone() {
-                    damage += 1;
-                    remaining_strength = max(0, 1 + nb_neighboors - damage);
-                } else {
-                    // if no owner set, no strength so ownership can be took directly
-                    remaining_strength = 0;
-                }
+                // when clicking on a tile owned by someone => raise damage
+                damage += 1;
+                remaining_strength = max(0, 1 + nb_neighboors - damage);
 
                 // Handle the tile change in ownership
                 if remaining_strength == 0 {
-                    new_tile.user_id = Some(click_user_id.to_string());
-                    new_tile.damage = 0;
+                    updated_tile.user_id = click_user_id.to_string();
+                    updated_tile.damage = 0;
 
                     // 0 => Directly insert tile with new user_id to ease strength computing below
                     {
                         // log::info!("Directly take ownership");
                         let mut tiles_w = self.tiles.write().await;
-                        tiles_w.insert(coords.clone(), new_tile.clone());
+                        tiles_w.insert(*coords, updated_tile.clone());
                     }
 
                     // 1 => Append former owner's contiguous tiles for client notification, strength will be recomputed at the end
-                    if let Some(former_owner_id) = current_tile.user_id.clone() {
-                        // log::info!("Append former owner neighbors for notification");
-
-                        let neighbors = self
-                            .contiguous_neighbors_of_tile(&coords, &former_owner_id, 2)
+                    updated_tiles.append(
+                        &mut self
+                            .contiguous_neighbors_of_tile(&coords, &current_tile.user_id, 2)
                             .await
-                            .0;
-
-                        // log::info!("neigbors of former owner: {neighbors:?}");
-                        updated_tiles.append(&mut neighbors.clone());
-                    }
-
-                    let req_user_tiles = self
-                        .contiguous_neighbors_of_tile(&coords, click_user_id, 2)
-                        .await
-                        .0;
+                            .0,
+                    );
 
                     // log::info!("request user's neighbors tiles to update: {req_user_tiles:?}");
 
                     // 2 => append new owner's tiles to `update_tiles` vec, will compute final strength at the end
-                    updated_tiles.append(&mut req_user_tiles.clone());
+                    updated_tiles.append(
+                        &mut self
+                            .contiguous_neighbors_of_tile(&coords, click_user_id, 2)
+                            .await
+                            .0,
+                    );
                 } else {
                     // Update current tile without changing ownership, not yet "destroyed"
                     // but with augmented damage
-                    new_tile.damage += 1;
+                    updated_tile.damage += 1;
                     {
                         let mut tiles_w = self.tiles.write().await;
-                        tiles_w.insert(*coords, new_tile.clone());
+                        tiles_w.insert(*coords, updated_tile.clone());
                     }
                 }
             } else {
-                // => checking if diminish damage, in other word we "heal" the tile
+                // Clicking user clicks on its tile
+
+                // if has some damage => heals its tile
                 if current_tile.damage > 0 {
-                    new_tile.damage -= 1;
+                    updated_tile.damage -= 1;
                     {
                         let mut tiles_w = self.tiles.write().await;
-                        tiles_w.insert(*coords, new_tile.clone());
+                        tiles_w.insert(*coords, updated_tile.clone());
                     }
                 }
             }
-            // append new_tile to updated tiles if changed
-            if new_tile.damage != current_tile.damage || new_tile.user_id != current_tile.user_id {
-                updated_tiles.push((*coords, new_tile))
-            }
-        }
 
+            // append new_tile to updated tiles if changed (either damage change or ownership change)
+            if updated_tile.damage != current_tile.damage
+                || updated_tile.user_id != current_tile.user_id
+            {
+                updated_tiles.push((*coords, updated_tile))
+            }
+        } else {
+            // if not then we create the tile
+            let new_tile = InnerTileData {
+                user_id: click_user_id.to_string(),
+                damage: 0,
+            };
+            {
+                let mut tiles_w = self.tiles.write().await;
+                tiles_w.insert(coords.clone(), new_tile.clone());
+            }
+
+            // then append it to updated_tiles result
+            updated_tiles.push((coords.clone(), new_tile.clone()));
+            updated_tiles.append(
+                &mut self
+                    .contiguous_neighbors_of_tile(&coords, click_user_id, 2)
+                    .await
+                    .0,
+            );
+
+            // then append its neighboors to have new strength
+        }
+        // otherwise
         let futures: Vec<_> = updated_tiles
             .iter()
             .map(|(coords, tile)| async move {

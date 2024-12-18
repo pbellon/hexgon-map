@@ -55,5 +55,6 @@
 
 ## Resources
 
+- Red blob games incredible hexagons articles https://www.redblobgames.com/grids/hexagons/#coordinates
 - https://discourse.threejs.org/t/hexagonal-grid-formation/18396
 - https://github.com/vonWolfehaus/von-grid?tab=readme-ov-file

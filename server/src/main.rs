@@ -3,7 +3,6 @@ use actix_web::middleware::Logger;
 use actix_web::web;
 use actix_web::{get, http, post, App, HttpResponse, HttpServer, Responder};
 use actix_web_httpauth::extractors::basic::BasicAuth;
-use env_logger::Env;
 use pixelstratwar::config::GameConfig;
 use pixelstratwar::coords::AxialCoords;
 use pixelstratwar::game::GameData;
@@ -24,7 +23,7 @@ async fn post_tile(
     credentials: BasicAuth,
 ) -> impl Responder {
     let user_id_auth = credentials.user_id();
-    let token = credentials.password().unwrap_or("");
+    let token: &str = credentials.password().unwrap_or("");
 
     // log::info!("user_id({user_id}) - token({token})");
 
@@ -99,9 +98,13 @@ async fn main() -> std::io::Result<()> {
     let users = GameUsers::new();
     let app_config = GameConfig::read_config_from_env();
 
-    env_logger::init_from_env(Env::default().default_filter_or("info"));
+    std::env::set_var("RUST_LOG", "info");
+    std::env::set_var("RUST_BACKTRACE", "1");
+    env_logger::init();
 
     let game_data = GameData::init_from_config(&app_config, &users).await;
+
+    log::info!("Game data initialized: {game_data:?}");
 
     let clients = init_clients();
 
@@ -111,6 +114,8 @@ async fn main() -> std::io::Result<()> {
     // });
 
     HttpServer::new(move || {
+        let logger = Logger::default();
+
         App::new()
             .app_data(web::Data::new(game_data.clone()))
             .app_data(web::Data::new(clients.clone()))
@@ -122,11 +127,10 @@ async fn main() -> std::io::Result<()> {
             .service(register_user)
             .service(web::resource("/ws").to(ws_handler))
             // .wrap(Compress::default())
-            .wrap(Logger::default())
+            .wrap(logger)
             .wrap(cors_middleware(&app_config))
-            .wrap(Logger::new("%a %{User-Agent}i"))
     })
-    .workers(1000)
+    .workers(10)
     .bind(("0.0.0.0", 8080))?
     .run()
     .await

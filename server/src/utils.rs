@@ -17,7 +17,7 @@ pub async fn create_benchmark_game_data(benchmark_user: &User, radius: i32) -> G
             tiles_w.insert(
                 coords,
                 InnerTileData {
-                    user_id: Some(benchmark_user.id.clone()),
+                    user_id: benchmark_user.id.clone(),
                     damage: 0,
                 },
             );

@@ -27,6 +27,10 @@ pub struct GameData {
 }
 
 impl GameData {
+    pub fn all_grid_coords(&self) -> Vec<AxialCoords> {
+        self.precomputed_neighbors.keys().cloned().collect()
+    }
+
     pub async fn init_from_config(config: &GameConfig, users: &GameUsers) -> Self {
         if config.use_benchmark_data {
             let user = users.register_user("benchmark-user").await;

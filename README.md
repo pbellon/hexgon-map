@@ -16,7 +16,8 @@
        then directly allow play
   - [x] 5. if not logged (or kicked out) let user enters its information (if not previously logged and
        token did not expired)
-- [ ] enforce `GameData::handle_click` algo by adding strong unit tests
+- [x] enforce `GameData::handle_click` algo by adding strong unit tests
+  - => now core mechanics tested, see `tests/game_tests.rs`
 - [ ] create new `GET /users` endpoint and use it
 - [ ] create new `GET /settings` endpoint and use it
 - [ ] create new `GET /tiles?batch={n}` endpoint and use it
@@ -28,8 +29,7 @@
 - [ ] (back) make color more random (use generated uuid ?)
 
 - [x] (front+backend) handle token-based auth
-- [ ] and token expiration that will be helpful to
-      clean the map from inactive users (maybe start with 1h validity => after one hour of
+- [ ] add token expiration and clean the map of inactive users tiles (maybe start with 1h validity => after one hour of
       inactivity you must log again)
 - [ ] (front+back) handle user clean (when kicked out after inactivity)
 - [ ] (front/api.ts) handle localStorage to avoid losing auth

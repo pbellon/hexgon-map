@@ -1,5 +1,5 @@
 [package]
-name = "pixelstratwar_backend"
+name = "pixelstratwar"
 version = "0.1.0"
 edition = "2021"
 

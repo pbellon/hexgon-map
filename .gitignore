@@ -10,3 +10,4 @@ wheels/
 .venv
 server/target/
 node_modules/
+tarpaulin-report.html

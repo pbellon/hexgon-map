@@ -1,4 +1,4 @@
-use crate::coords::{cube_ring, cube_spiral, CubeCoords};
+use pixelstratwar::coords::{cube_ring, cube_spiral, cube_substract, CubeCoords};
 
 #[test]
 fn test_cube_ring() {
@@ -32,31 +32,31 @@ fn test_coords_spiral() {
     let result_two = cube_spiral(&center, 2);
     let result_three = cube_spiral(&center, 3);
     assert!(
-        result_one.len() == 6,
-        "coords_range should return a vector with exactly 6 elements for a radius of 1"
+        result_one.len() == 7,
+        "coords_range should return a vector with exactly 7 elements for a radius of 1"
     );
 
     assert!(
-        result_two.len() == 18,
-        "coords_range should return a vector with exactly 18 elements for a radius of 2"
+        result_two.len() == 19,
+        "coords_range should return a vector with exactly 19 elements for a radius of 2"
     );
 
     assert!(
-        result_three.len() == 36,
-        "coords_range should return a vector with exactly 18 elements for a radius of 2"
+        result_three.len() == 37,
+        "coords_range should return a vector with exactly 37 elements for a radius of 3"
     );
 }
 
-// #[test]
-// fn test_cube_subtract() {
-//     let a = CubeCoords::new(0, 1, -1);
-//     let b = CubeCoords::new(1, 2, -3);
-//     let res = cube_substract(&a, &b);
-//     assert!(
-//         res == CubeCoords::new(-1, -1, 2),
-//         "{:?} - {:?} should equal {{q: -1, r: -1, s: 2}} got {:?}",
-//         a,
-//         b,
-//         res
-//     );
-// }
+#[test]
+fn test_cube_subtract() {
+    let a = CubeCoords::new(0, 1, -1);
+    let b = CubeCoords::new(1, 2, -3);
+    let res = cube_substract(&a, &b);
+    assert!(
+        res == CubeCoords::new(-1, -1, 2),
+        "{:?} - {:?} should equal {{q: -1, r: -1, s: 2}} got {:?}",
+        a,
+        b,
+        res
+    );
+}

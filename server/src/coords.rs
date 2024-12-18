@@ -109,6 +109,10 @@ impl AxialCoords {
         Self { q, r }
     }
 
+    pub fn center() -> Self {
+        Self::new(0, 0)
+    }
+
     #[allow(dead_code)]
     pub fn as_cube(&self) -> CubeCoords {
         CubeCoords::new(self.q, self.r, -self.q - self.r)

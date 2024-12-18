@@ -1,28 +1,18 @@
-mod config;
-mod coords;
-mod game;
-mod grid;
-mod user;
-mod utils;
-mod websocket;
-
-#[cfg(test)]
-mod tests;
 use actix_cors::Cors;
 use actix_web::middleware::Logger;
 use actix_web::web;
 use actix_web::{get, http, post, App, HttpResponse, HttpServer, Responder};
 use actix_web_httpauth::extractors::basic::BasicAuth;
-use config::GameConfig;
-use coords::AxialCoords;
 use env_logger::Env;
-use game::GameData;
-use serde::Deserialize;
-use user::GameUsers;
-use websocket::{
+use pixelstratwar::config::GameConfig;
+use pixelstratwar::coords::AxialCoords;
+use pixelstratwar::game::GameData;
+use pixelstratwar::user::GameUsers;
+use pixelstratwar::websocket::{
     init_clients, notify_new_user, notify_score_change, tile_change_message, ws_handler,
     ClientList, MyBinaryMessage,
 };
+use serde::Deserialize;
 
 #[post("/tile/{q}/{r}")]
 async fn post_tile(
@@ -51,7 +41,6 @@ async fn post_tile(
         }
 
         let new_score = game_data.score_of_user(&user_id).await;
-
         notify_score_change(&clients, &user_id, new_score);
 
         return HttpResponse::Ok().json(updated_tiles);
@@ -59,7 +48,6 @@ async fn post_tile(
         // log::info!("Nope, it's not valid returning unauthorized");
         return HttpResponse::Unauthorized().body("Invalid token");
     }
-    // return HttpResponse::BadRequest().body(format!("Tile does not exists at {:?}", coords));
 }
 
 #[get("/data")]
@@ -138,6 +126,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors_middleware(&app_config))
             .wrap(Logger::new("%a %{User-Agent}i"))
     })
+    .workers(1000)
     .bind(("0.0.0.0", 8080))?
     .run()
     .await

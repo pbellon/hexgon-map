@@ -1,8 +1,8 @@
-import { AxialCoords, Tile, User } from "./types";
+import { AxialCoords, PublicUser, Tile } from "./types";
 
 export type WebSocketHandlersParams = {
   onTileChange: (coors: AxialCoords, tile: Tile) => void;
-  onNewUser: (user: User) => void;
+  onNewUser: (user: PublicUser) => void;
   onOpen: () => void;
   onClose: () => void;
 };

@@ -1,4 +1,4 @@
-import { GameData, Tile, User, AxialCoords, PointCoords } from "./types";
+import { Tile, AxialCoords, PointCoords, PublicUser } from "./types";
 
 export function axialToPixel({ q, r }: AxialCoords, size: number): PointCoords {
   const x = size * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
@@ -29,19 +29,19 @@ export function getTileName({ q, r }: AxialCoords): string {
 }
 
 export function tileAt(
-  { tiles }: GameData,
+  tiles: Record<string, Tile>,
   coords: AxialCoords
 ): Tile | undefined {
-  return tiles.find(([b]) => eqAxialCoords(coords, b))?.[1];
+  return tiles[getTileName(coords)];
 }
 
 export function ownerOf(
-  { users }: GameData,
+  users: Record<string, PublicUser>,
   tileOrUserId: Tile | string
-): User {
+): PublicUser {
   const userId =
     typeof tileOrUserId === "string" ? tileOrUserId : tileOrUserId.user_id;
-  const owner = users.find(({ id }) => id === userId);
+  const owner = users[userId ?? ""];
   if (!owner) {
     throw new Error(
       `Owner with ${userId} ID not found. This should not happen`

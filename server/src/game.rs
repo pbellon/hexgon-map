@@ -4,6 +4,8 @@ use std::{
     sync::Arc,
 };
 
+use rand::{rngs, seq::SliceRandom}; // you may need to adjust version depending on your Rust version
+
 use ::futures::future;
 use serde::Serialize;
 use tokio::sync::RwLock;
@@ -27,6 +29,7 @@ pub type TileMap = HashMap<AxialCoords, InnerTileData>;
 #[derive(Debug, Clone)]
 pub struct GameData {
     precomputed_neighbors: PrecomputedNeighbors,
+    precomputed_batches: Vec<Vec<AxialCoords>>,
     pub tiles: Arc<RwLock<TileMap>>,
     pub settings: GridSettings,
 }
@@ -45,7 +48,7 @@ impl GameData {
             let mut tiles = data.tiles.write().await;
             for coord in parallelogram {
                 tiles.insert(
-                    coord.as_axial(),
+                    coord,
                     InnerTileData {
                         user_id: user.id.clone(),
                         damage: 0,
@@ -58,6 +61,44 @@ impl GameData {
         data
     }
 
+    pub fn get_batch_list(&self) -> Vec<usize> {
+        let batches_len = self.precomputed_batches.len();
+        let mut list = (0..batches_len).collect::<Vec<_>>();
+        let mut rng = rand::thread_rng();
+
+        list.shuffle(&mut rng);
+
+        list
+    }
+
+    pub async fn compute_batch(&self, batch: usize) -> Result<Vec<(i32, i32, u8, String)>, String> {
+        // Acquire a read lock on tiles
+        let tiles = self.tiles.read().await;
+
+        // Check if the batch exists
+        if let Some(batch_coords) = self.precomputed_batches.get(batch) {
+            // Collect futures for computing tile data, skipping missing tiles
+            let futures = batch_coords.iter().filter_map(|coords| {
+                if let Some(tile) = tiles.get(coords) {
+                    Some(async move {
+                        let computed = self.computed_tile(coords, tile).await;
+                        (coords.q, coords.r, computed.strength, computed.user_id)
+                    })
+                } else {
+                    // Tile does not exist; skip it
+                    None
+                }
+            });
+
+            // Resolve all futures
+            let results = future::join_all(futures).await;
+
+            // Return the successfully computed results
+            return Ok(results);
+        }
+
+        Err(format!("Batch {} does not exist", batch))
+    }
     pub fn all_grid_coords(&self) -> Vec<AxialCoords> {
         self.precomputed_neighbors.keys().cloned().collect()
     }
@@ -185,6 +226,7 @@ impl GameData {
         let precomputed_neighbors = coords::compute_neighboors(radius);
 
         Self {
+            precomputed_batches: coords::create_parallelogram_coords_batches(6, 6, radius),
             settings: GridSettings { radius },
             tiles: Arc::new(RwLock::new(HashMap::new())),
             precomputed_neighbors,

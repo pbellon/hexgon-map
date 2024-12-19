@@ -16,6 +16,5 @@ export function hexagonColor(color: number, strength: number): Color {
 
   const tColor = new Color(color);
   const opacity = tileOpacity(strength);
-  // console.log(`opacity(${strength}) => ${opacity}`);
   return new Color().lerpColors(BASE_COLOR, tColor, opacity);
 }

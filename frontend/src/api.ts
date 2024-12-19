@@ -1,18 +1,18 @@
 import {
-  GameData,
   AxialCoords,
   CoordsAndTile,
   User,
-  ApiGameData,
+  BatchTile,
+  GameSettings,
+  PublicUser,
 } from "./types";
 import { webSocketHandler, WebSocketHandlersParams } from "./websocket";
 
 export type GameApi = ReturnType<typeof initApi>;
 
-interface LocalGameState {
+interface LocalApiState {
+  users: Record<string, PublicUser>;
   user: User | undefined;
-  tiles: CoordsAndTile[];
-  users: User[];
 }
 
 export function initApi() {
@@ -22,36 +22,48 @@ export function initApi() {
 
   // TODO: store & restore from localStorage
   // state
-  let state: LocalGameState = {
+  let state: LocalApiState = {
     user: undefined,
-    tiles: [],
-    users: [],
+    users: {},
   };
 
   function getAuth(user: User): string {
     return btoa(`${user.id}:${user.token}`);
   }
 
-  const fetchGameData = async (): Promise<GameData> => {
-    const response = await fetch(fullUrl("/data"), { method: "get" });
-    const data = (await response.json()) as ApiGameData;
+  async function fetchBatch(batch: number): Promise<CoordsAndTile[]> {
+    const response = await fetch(fullUrl(`/tiles?batch=${batch}`), {
+      method: "get",
+    });
+    let tiles = (await response.json()) as BatchTile[];
 
-    let gameData = {
-      ...data,
-      tiles: data.tiles.map(
-        ([q, r, strength, user_id]) =>
-          [
-            { q, r },
-            { strength, user_id },
-          ] as CoordsAndTile
-      ),
-    };
+    return tiles.map(
+      ([q, r, strength, user_id]) =>
+        [
+          { q, r },
+          { strength, user_id },
+        ] as CoordsAndTile
+    );
+  }
 
-    state.tiles = gameData.tiles;
-    state.users = data.users;
+  async function fetchBatchesList(): Promise<number[]> {
+    const response = await fetch(fullUrl("/batches"), { method: "get" });
+    return (await response.json()) as number[];
+  }
 
-    return gameData;
-  };
+  async function fetchGameSettings(): Promise<GameSettings> {
+    const response = await fetch(fullUrl("/settings"), { method: "get" });
+    return (await response.json()) as GameSettings;
+  }
+
+  async function fetchUsers(): Promise<Record<string, PublicUser>> {
+    const response = await fetch(fullUrl("/users"), { method: "get" });
+    const data = (await response.json()) as PublicUser[];
+
+    state.users = Object.fromEntries(data.map((data) => [data.id, data]));
+
+    return state.users;
+  }
 
   const clickAt = async (coords: AxialCoords): Promise<CoordsAndTile[]> => {
     console.log("[api/clickAt]", coords);
@@ -61,15 +73,11 @@ export function initApi() {
         "content-type": "application/json",
       };
 
-      console.log(headers);
-
       const response = await fetch(fullUrl(`/tile/${coords.q}/${coords.r}`), {
         method: "POST",
         headers,
         body: state.user.id,
       });
-
-      console.log("Tu finis un jour ouuuuuuuu?");
 
       return (await response.json()) as CoordsAndTile[];
     }
@@ -90,8 +98,13 @@ export function initApi() {
 
     const user = await response.json();
 
-    state.users.push(user);
     state.user = user;
+
+    state.users[user.id] = {
+      id: user.id,
+      color: user.color,
+      username: user.username,
+    };
 
     return user as User;
   };
@@ -101,9 +114,13 @@ export function initApi() {
   }
 
   return {
-    configureWebSocket,
-    fetchGameData,
     clickAt,
+    configureWebSocket,
+    fetchBatch,
+    fetchBatchesList,
+    fetchGameSettings,
+    fetchUsers,
     login,
+    state,
   };
 }

@@ -6,8 +6,8 @@ import {
   MeshPhongMaterial,
   Shape,
 } from "three";
-import { GameData, OnClickCallback, WithCallback } from "./types";
-import { axialToPixel, getTileName, ownerOf, tileAt } from "./grid";
+import { GameSettings, OnClickCallback, WithCallback } from "./types";
+import { axialToPixel, getTileName } from "./grid";
 import { HEX_COLOR, HEX_DEPTH, HEX_SIZE, HEX_SPACING } from "./constants";
 import { hexagonColor } from "./colors";
 import { cubeAsAxial, cubeSpiral } from "./coords";
@@ -51,30 +51,27 @@ export function createHexagon(
   return new Mesh(geometry, material);
 }
 
-export function createHexMap(data: GameData, onClick: OnClickCallback): Group {
+export function createHexMap(
+  settings: GameSettings,
+  onClick: OnClickCallback
+): Group {
   const hexGroup = new Group();
-  const coordinates = cubeSpiral({ q: 0, r: 0, s: 0 }, data.settings.radius);
+  const coordinates = cubeSpiral({ q: 0, r: 0, s: 0 }, settings.radius);
 
   coordinates.forEach((cubeCoords) => {
     let coords = cubeAsAxial(cubeCoords);
     let color = HEX_COLOR;
     let strength = 0;
 
-    let tile = tileAt(data, coords);
-
-    // should have corresponding user
-    if (tile && tile.user_id) {
-      const user = ownerOf(data, tile);
-      color = parseInt(user.color.slice(1), 16);
-      strength = tile.strength;
-    }
-
     const { x, y } = axialToPixel(coords, HEX_SIZE + HEX_SPACING);
 
     const hex = createHexagon(HEX_SIZE, color, strength, HEX_DEPTH); // Default color
 
     hex.position.set(x, y, 0);
-    hex.userData = coords; // Attach cube coordinates to hex
+    hex.userData = {
+      coords,
+      user_id: undefined,
+    }; // Attach cube coordinates to hex
     (hex as WithCallback<typeof hex>).onClick = onClick;
 
     hex.name = getTileName(coords);

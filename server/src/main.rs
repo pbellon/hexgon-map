@@ -42,25 +42,58 @@ async fn post_tile(
         let new_score = game_data.score_of_user(&user_id).await;
         notify_score_change(&clients, &user_id, new_score);
 
-        return HttpResponse::Ok().json(updated_tiles);
+        return HttpResponse::Ok().body("Tile updated");
     } else {
         // log::info!("Nope, it's not valid returning unauthorized");
         return HttpResponse::Unauthorized().body("Invalid token");
     }
 }
 
-#[get("/data")]
-async fn get_game_data(
-    game_data: web::Data<GameData>,
-    users: web::Data<GameUsers>,
-) -> impl Responder {
-    let data = game_data.as_public(&users).await;
-
-    // log::info!("public users: {data:?}");
+#[get("/settings")]
+async fn get_game_settings(game_data: web::Data<GameData>) -> impl Responder {
+    log::info!("OK?");
 
     HttpResponse::Ok()
         .content_type("application/json")
-        .json(data)
+        .json(game_data.settings)
+}
+
+#[derive(Deserialize)]
+struct BatchTilesQuery {
+    batch: usize,
+}
+
+#[get("/tiles")]
+async fn get_batch_tiles(
+    game_data: web::Data<GameData>,
+    query: web::Query<BatchTilesQuery>,
+) -> impl Responder {
+    match game_data.compute_batch(query.batch).await {
+        Ok(computed_batch) => HttpResponse::Ok()
+            .content_type("application/json")
+            .json(computed_batch),
+        Err(e) => HttpResponse::InternalServerError()
+            .content_type("text/plain")
+            .body(format!("Failed to compute batch: {}", e)),
+    }
+}
+
+#[get("/batches")]
+async fn get_batch_list(game_data: web::Data<GameData>) -> impl Responder {
+    let list = game_data.get_batch_list();
+
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .json(list)
+}
+
+#[get("/users")]
+async fn get_users(users: web::Data<GameUsers>) -> impl Responder {
+    let users_public = users.as_public().await;
+
+    HttpResponse::Ok()
+        .content_type("application/json")
+        .json(users_public)
 }
 
 #[derive(Deserialize)]
@@ -123,14 +156,17 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(users.clone()))
             // protected
             .service(post_tile)
-            .service(get_game_data)
+            .service(get_batch_list)
+            .service(get_batch_tiles)
+            .service(get_game_settings)
+            .service(get_users)
             .service(register_user)
             .service(web::resource("/ws").to(ws_handler))
             // .wrap(Compress::default())
             .wrap(logger)
             .wrap(cors_middleware(&app_config))
     })
-    .workers(10)
+    .workers(350)
     .bind(("0.0.0.0", 8080))?
     .run()
     .await

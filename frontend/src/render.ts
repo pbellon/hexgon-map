@@ -12,11 +12,12 @@ import {
   WebGLRenderer,
 } from "three";
 import { getTileName, ownerOf } from "./grid";
-import { AxialCoords, WithCallback } from "./types";
+import { CoordsAndTile, HexUserData, Tile, WithCallback } from "./types";
 import { OrbitControls } from "three/examples/jsm/Addons.js";
 import { GameApi } from "./api";
 import { createHexMap } from "./shapes";
 import { hexagonColor } from "./colors";
+import { wait } from "./utils";
 
 function handleLights(scene: Scene) {
   const ambientLight = new AmbientLight(0xffffff, 0.95); // Soft global light
@@ -45,7 +46,7 @@ export function handleHexInteraction(
     if (intersects.length > 0) {
       const hex = intersects[0].object as WithCallback<Mesh>;
       if (hex.onClick) {
-        hex.onClick(hex.userData as AxialCoords, hex);
+        hex.onClick(hex.userData as HexUserData, hex);
       }
     }
   }
@@ -60,10 +61,14 @@ type RenderParams = {
 };
 
 export async function render({ api, onReady }: RenderParams) {
-  let gameData = await api.fetchGameData();
+  let settings = await api.fetchGameSettings();
   let rendered = false;
   let wsConnected = false;
   let onReadyCalled = false;
+
+  await api.fetchUsers();
+
+  let tiles: Record<string, Tile> = {};
 
   // Create renderer
   const canvas = document.getElementById("render") as HTMLCanvasElement;
@@ -97,11 +102,11 @@ export async function render({ api, onReady }: RenderParams) {
     LEFT: MOUSE.PAN,
   };
 
-  const hexMap = createHexMap(gameData, async (tileData) => {
+  const hexMap = createHexMap(settings, async (data) => {
     // TODO: compute strength localy based on current data
 
     // send data and reconcile after response
-    await api.clickAt(tileData);
+    await api.clickAt(data.coords);
 
     // updatedTiles.forEach(([coords, tile]) => {
     //   const hex = hexMap.getObjectByName(getTileName(coords)) as Mesh;
@@ -142,24 +147,22 @@ export async function render({ api, onReady }: RenderParams) {
       wsConnected = false;
     },
     onNewUser: (user) => {
-      gameData.users.push(user);
+      api.state.users[user.id] = user;
     },
     onTileChange: (coords, tile) => {
       const hex = hexMap.getObjectByName(getTileName(coords)) as Mesh;
       if (hex) {
+        hex.userData.user_id = tile.user_id;
+
         try {
-          const user = ownerOf(gameData, tile);
+          const user = ownerOf(api.state.users, tile);
           if (user) {
             (hex.material as MeshPhongMaterial).color.set(
               hexagonColor(parseInt(user.color.slice(1), 16), tile.strength)
             );
           }
         } catch (e) {
-          console.error(
-            `Did not found user for ${tile.user_id} ID`,
-            gameData.users,
-            e
-          );
+          console.error(`Did not found user for ${tile.user_id} ID`, e);
           // fail silently
         }
       }
@@ -172,6 +175,33 @@ export async function render({ api, onReady }: RenderParams) {
 
     renderer.setSize(window.innerWidth, window.innerHeight);
   };
+
+  const batches = await api.fetchBatchesList();
+
+  let res: CoordsAndTile[] = [];
+
+  for (let batch of batches) {
+    let data = await api.fetchBatch(batch);
+    data.forEach(([coords, tile]) => {
+      let k = getTileName(coords);
+      let hex = hexMap.getObjectByName(k) as Mesh;
+      const user = ownerOf(api.state.users, tile);
+
+      if (hex && user && !hex.userData.user_id) {
+        hex.userData.user_id = user.id;
+
+        (hex.material as MeshPhongMaterial).color.set(
+          hexagonColor(parseInt(user.color.slice(1), 16), tile.strength)
+        );
+      }
+
+      tiles[k] = tile;
+    });
+
+    await wait(50);
+
+    res = res.concat(data);
+  }
 }
 
 // flow

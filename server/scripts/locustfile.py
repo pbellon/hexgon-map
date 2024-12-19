@@ -20,14 +20,41 @@ class UserBehavior(TaskSet):
     def on_start(self):
         """Executed when a virtual user starts. Simulates user login."""
         username = random_username()
-        user = self.login(username)
-        self.user_id = user["id"]
-        self.token = user["token"]
-        basic_enc = base64.b64encode(
-            f"{self.user_id}:{self.token}".encode("utf-8")
-        ).decode("utf-8")
 
-        self.auth_headers = {"Authorization": f"Basic {basic_enc}"}
+        # won't be used here but on app start the game fetches settings and users list
+        self.fetch_settings()
+        self.fetch_users()
+
+        user = self.login(username)
+
+        if user is not None:
+            self.user_id = user["id"]
+            self.token = user["token"]
+            basic_enc = base64.b64encode(
+                f"{self.user_id}:{self.token}".encode("utf-8")
+            ).decode("utf-8")
+
+            self.auth_headers = {"Authorization": f"Basic {basic_enc}"}
+
+    def fetch_settings(self):
+        with self.client.get("/settings", catch_response=True) as response:
+            if response.status_code == 200:
+                settings = response.json()
+                response.success()
+                return settings
+            else:
+                response.failure("Failed to fetch settings")
+                return None
+
+    def fetch_users(self):
+        with self.client.get("/users", catch_response=True) as response:
+            if response.status_code == 200:
+                users = response.json()
+                response.success()
+                return users
+            else:
+                response.failure("Failed to fetch settings")
+                return None
 
     def login(self, username):
         """Login user and get a user ID."""
@@ -61,34 +88,15 @@ class UserBehavior(TaskSet):
         ) as response:
             if response.status_code == 200:
                 response.success()
-                print(f"Clicked tile ({q}, {r}) successfully.")
             else:
                 response.failure(
                     f"Failed to click tile ({q}, {r}). Status: {response.status_code}"
                 )
 
-    # @task(1)  # Less frequent task
-    # def perform_multiple_tile_changes(self):
-    #     """Simulate sequential tile clicks."""
-    #     if not self.user_id:
-    #         print("User ID not set. Skipping multiple tile clicks.")
-    #         return
-
-    #     for _ in range(5):  # Simulate clicking on 5 tiles in sequence
-    #         q = random.randint(-10, 10)
-    #         r = random.randint(-10, 10)
-    #         payload = {"user_id": self.user_id, "action": "click"}
-    #         url = f"/tile/{q}/{r}"
-
-    #         with self.client.post(url, json=payload, catch_response=True) as response:
-    #             if response.status_code == 200:
-    #                 response.success()
-    #                 print(f"Sequential click on tile ({q}, {r}) succeeded.")
-    #             else:
-    #                 response.failure(f"Sequential click on tile ({q}, {r}) failed.")
-
 
 # Define a Locust User class
 class TileUser(HttpUser):
     tasks = [UserBehavior]  # Assign the task set
-    wait_time = between(1, 3)  # Simulate user "think time" between 1 and 3 seconds
+    wait_time = between(
+        0.3, 2.5
+    )  # Simulate user "think time" between 30ms and 2.5 seconds

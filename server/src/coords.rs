@@ -89,10 +89,10 @@ pub struct ParallelogramConfig {
     start: CubeCoords,
     height: u32,
     width: u32,
-    constraint_to: Option<u32>,
+    constraint_to: u32,
 }
 
-pub fn cube_parallelogram_tiles(config: ParallelogramConfig) -> Vec<CubeCoords> {
+pub fn cube_parallelogram_tiles(config: ParallelogramConfig) -> Vec<AxialCoords> {
     let mut tiles = Vec::new();
     let start = config.start;
 
@@ -101,19 +101,11 @@ pub fn cube_parallelogram_tiles(config: ParallelogramConfig) -> Vec<CubeCoords> 
             let h_offset = cube_scale(&CubeCoords::new(1, 0, -1), q);
             let v_offset = cube_scale(&CubeCoords::new(-1, 1, 0), r);
 
-            let coord = cube_add(&start, &cube_add(&v_offset, &h_offset));
+            let coords = cube_add(&start, &cube_add(&v_offset, &h_offset));
+            let axial_coords = coords.as_axial();
 
-            // log::info!("cube_parallelogram_tiles()\n\tr = {r}, q = {q}\n\t=> h_offset = {h_offset:?}, v_offset={v_offset:?}\n\tcoords = {coord:?}");
-
-            if let Some(radius) = config.constraint_to {
-                if is_within_grid(coord.as_axial(), radius) {
-                    tiles.push(coord);
-                }
-                // } else {
-                //     log::info!("{coord:?} was ignored because out of the grid");
-                // }
-            } else {
-                tiles.push(coord);
+            if is_within_grid(axial_coords, config.constraint_to) {
+                tiles.push(axial_coords);
             }
         }
     }
@@ -127,7 +119,7 @@ pub fn create_parallelogram_coords_batches(
     rows: u8,
     cols: u8,
     grid_radius: u32,
-) -> Vec<Vec<CubeCoords>> {
+) -> Vec<Vec<AxialCoords>> {
     let mut results = Vec::new();
 
     let radius = grid_radius as i32;
@@ -158,7 +150,7 @@ pub fn create_parallelogram_coords_batches(
                 start: parallelogram_start,
                 height: p_height,
                 width: p_width,
-                constraint_to: Some(grid_radius),
+                constraint_to: grid_radius,
             });
 
             results.push(tiles);

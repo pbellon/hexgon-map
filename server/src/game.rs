@@ -11,9 +11,8 @@ use tokio::sync::RwLock;
 use crate::{
     config::GameConfig,
     coords::{self, AxialCoords, PrecomputedNeighbors},
-    grid::{GridSettings, InnerTileData, TileData, TileMap},
+    grid::{GridSettings, InnerTileData, TileData},
     user::{GameUsers, PublicUser},
-    utils::create_benchmark_game_data,
 };
 
 #[derive(Serialize, Debug, Clone)]
@@ -23,6 +22,8 @@ pub struct PublicGameData {
     users: Vec<PublicUser>,
 }
 
+pub type TileMap = HashMap<AxialCoords, InnerTileData>;
+
 #[derive(Debug, Clone)]
 pub struct GameData {
     precomputed_neighbors: PrecomputedNeighbors,
@@ -31,17 +32,45 @@ pub struct GameData {
 }
 
 impl GameData {
+    // not designed to be used in production, init the game data with some visual batches
+    async fn debug_batches(config: &GameConfig, users: &GameUsers) -> Self {
+        let data = Self::new(config.grid_radius);
+
+        let parallelograms = coords::create_parallelogram_coords_batches(6, 6, config.grid_radius);
+        let mut i = 0;
+
+        for parallelogram in parallelograms {
+            // create a user for this
+            let user = users.register_user(&format!("{i}{i}-fake-user-{i}")).await;
+            let mut tiles = data.tiles.write().await;
+            for coord in parallelogram {
+                tiles.insert(
+                    coord.as_axial(),
+                    InnerTileData {
+                        user_id: user.id.clone(),
+                        damage: 0,
+                    },
+                );
+            }
+            i += 1;
+        }
+
+        data
+    }
+
     pub fn all_grid_coords(&self) -> Vec<AxialCoords> {
         self.precomputed_neighbors.keys().cloned().collect()
     }
 
     pub async fn init_from_config(config: &GameConfig, users: &GameUsers) -> Self {
         if config.use_benchmark_data {
-            let user = users.register_user("benchmark-user").await;
-            return create_benchmark_game_data(&user, config.grid_radius as i32).await;
+            return Self::debug_batches(config, users).await;
+
+            // let user = users.register_user("benchmark-user").await;
+            // return create_benchmark_game_data(&user, config.grid_radius as i32).await;
         }
 
-        Self::new(config.grid_radius as i32)
+        Self::new(config.grid_radius)
     }
 
     pub async fn score_of_user(&self, user_id: &str) -> u32 {
@@ -152,7 +181,7 @@ impl GameData {
         }
     }
 
-    pub fn new(radius: i32) -> Self {
+    pub fn new(radius: u32) -> Self {
         let precomputed_neighbors = coords::compute_neighboors(radius);
 
         Self {

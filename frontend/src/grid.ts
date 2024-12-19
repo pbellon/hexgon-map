@@ -1,8 +1,8 @@
 import { GameData, Tile, User, AxialCoords, PointCoords } from "./types";
 
 export function axialToPixel({ q, r }: AxialCoords, size: number): PointCoords {
-  const x = size * Math.sqrt(3) * (q + r / 2);
-  const y = size * (3 / 2) * r;
+  const x = size * (Math.sqrt(3) * q + (Math.sqrt(3) / 2) * r);
+  const y = -size * ((3 / 2) * r);
   return { x, y };
 }
 
@@ -25,7 +25,7 @@ export function generateHexCoordinates(radius: number): AxialCoords[] {
 }
 
 export function getTileName({ q, r }: AxialCoords): string {
-  return `${q + 200}-${r + 200}`;
+  return `${q}-${r}`;
 }
 
 export function tileAt(

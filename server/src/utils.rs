@@ -4,7 +4,7 @@ use std::hash::{Hash, Hasher};
 use crate::user::User;
 use crate::{game::GameData, grid::InnerTileData};
 
-pub async fn create_benchmark_game_data(benchmark_user: &User, radius: i32) -> GameData {
+pub async fn create_benchmark_game_data(benchmark_user: &User, radius: u32) -> GameData {
     let data = GameData::new(radius);
 
     let keys: Vec<_> = {

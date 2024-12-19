@@ -3,7 +3,7 @@ use std::env;
 /// All game configuration that can be done via env variables
 #[derive(Clone)]
 pub struct GameConfig {
-    pub grid_radius: u8,
+    pub grid_radius: u32,
     pub front_end_url: String,
     pub use_benchmark_data: bool,
 }
@@ -15,10 +15,10 @@ impl GameConfig {
             Err(_) => "http://localhost:5173".to_string(),
         };
 
-        let grid_radius: u8 = match env::var("GRID_RADIUS") {
+        let grid_radius: u32 = match env::var("GRID_RADIUS") {
             Ok(value) => value
                 .parse()
-                .expect("Failed to parse GRID_RADIUS. Expected a valid u8"),
+                .expect("Failed to parse GRID_RADIUS. Expected a valid u32"),
             Err(_) => 80,
         };
 

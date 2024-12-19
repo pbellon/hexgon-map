@@ -1,5 +1,6 @@
 use std::{
     collections::HashMap,
+    fmt::Debug,
     hash::{Hash, Hasher},
 };
 
@@ -14,11 +15,17 @@ const DIRECTIONS: [CubeCoords; 6] = [
     CubeCoords { q: 0, r: 1, s: -1 },
 ];
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]
+#[derive(Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]
 pub struct CubeCoords {
     q: i32,
     r: i32,
     s: i32,
+}
+
+impl Debug for CubeCoords {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "(q: {}, r:{}, s:{})", self.q, self.r, self.s)
+    }
 }
 
 impl CubeCoords {
@@ -34,14 +41,13 @@ impl CubeCoords {
         AxialCoords::new(self.q, self.r)
     }
 }
-
-pub fn cube_add(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
-    CubeCoords::new(a.q + b.q, a.r + b.r, a.s + b.s)
-}
-
 #[allow(dead_code)]
 pub fn cube_substract(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
     CubeCoords::new(a.q - b.q, a.r - b.r, a.s - b.s)
+}
+
+pub fn cube_add(a: &CubeCoords, b: &CubeCoords) -> CubeCoords {
+    CubeCoords::new(a.q + b.q, a.r + b.r, a.s + b.s)
 }
 
 pub fn cube_scale(a: &CubeCoords, factor: i32) -> CubeCoords {
@@ -56,15 +62,106 @@ pub fn cube_neighbor(coords: &CubeCoords, dir: usize) -> CubeCoords {
     cube_add(coords, &cube_direction(dir))
 }
 
-pub fn cube_ring(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
+pub fn cube_ring(center: &CubeCoords, radius: u32) -> Vec<CubeCoords> {
     let mut results = Vec::new();
 
-    let mut coords = cube_add(center, &cube_scale(&cube_direction(4), radius));
+    let mut coords = cube_add(center, &cube_scale(&cube_direction(4), radius as i32));
 
     for i in 0..6 {
         for _j in 0..radius {
             results.push(coords.clone());
             coords = cube_neighbor(&coords, i)
+        }
+    }
+
+    results
+}
+
+pub fn is_within_grid(coords: AxialCoords, radius: u32) -> bool {
+    let radius_i32 = radius as i32;
+    let q = coords.q;
+    let r = coords.r;
+
+    (q.abs() + r.abs() + (-q - r).abs()) / 2 <= radius_i32
+}
+
+pub struct ParallelogramConfig {
+    start: CubeCoords,
+    height: u32,
+    width: u32,
+    constraint_to: Option<u32>,
+}
+
+pub fn cube_parallelogram_tiles(config: ParallelogramConfig) -> Vec<CubeCoords> {
+    let mut tiles = Vec::new();
+    let start = config.start;
+
+    for r in 0..config.height as i32 {
+        for q in 0..config.width as i32 {
+            let h_offset = cube_scale(&CubeCoords::new(1, 0, -1), q);
+            let v_offset = cube_scale(&CubeCoords::new(-1, 1, 0), r);
+
+            let coord = cube_add(&start, &cube_add(&v_offset, &h_offset));
+
+            // log::info!("cube_parallelogram_tiles()\n\tr = {r}, q = {q}\n\t=> h_offset = {h_offset:?}, v_offset={v_offset:?}\n\tcoords = {coord:?}");
+
+            if let Some(radius) = config.constraint_to {
+                if is_within_grid(coord.as_axial(), radius) {
+                    tiles.push(coord);
+                }
+                // } else {
+                //     log::info!("{coord:?} was ignored because out of the grid");
+                // }
+            } else {
+                tiles.push(coord);
+            }
+        }
+    }
+
+    tiles
+}
+
+/// divide the hexagonal grid in batches of coords defining some parallelograms
+/// should create `n = rows * cols` batches.
+pub fn create_parallelogram_coords_batches(
+    rows: u8,
+    cols: u8,
+    grid_radius: u32,
+) -> Vec<Vec<CubeCoords>> {
+    let mut results = Vec::new();
+
+    let radius = grid_radius as i32;
+
+    let d = 2 * grid_radius + 1;
+    let p_width = d.div_ceil(cols as u32);
+    let p_height = d.div_ceil(rows as u32);
+
+    let start = CubeCoords::new(0, -radius, radius);
+
+    for row in 0..rows {
+        for col in 0..cols {
+            // Décalage horizontal (inchangé)
+            let h_offset = cube_scale(
+                &cube_scale(&CubeCoords::new(1, 0, -1), p_width as i32),
+                col as i32,
+            );
+
+            let v_offset = cube_scale(
+                &cube_scale(&CubeCoords::new(-1, 1, 0), p_height as i32),
+                row as i32,
+            );
+
+            // Calcul correct du point de départ du parallélogramme
+            let parallelogram_start = cube_add(&start, &cube_add(&h_offset, &v_offset));
+
+            let tiles = cube_parallelogram_tiles(ParallelogramConfig {
+                start: parallelogram_start,
+                height: p_height,
+                width: p_width,
+                constraint_to: Some(grid_radius),
+            });
+
+            results.push(tiles);
         }
     }
 
@@ -86,7 +183,7 @@ pub fn direct_neighbors(center: &CubeCoords) -> [CubeCoords; 6] {
 /**
  * Does not include center countrary to red blob games' implementation
  */
-pub fn cube_spiral(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
+pub fn cube_spiral(center: &CubeCoords, radius: u32) -> Vec<CubeCoords> {
     let mut results: Vec<CubeCoords> = vec![center.clone()];
 
     let max = radius + 1;
@@ -98,10 +195,16 @@ pub fn cube_spiral(center: &CubeCoords, radius: i32) -> Vec<CubeCoords> {
     results
 }
 
-#[derive(Debug, Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]
+#[derive(Eq, PartialEq, Deserialize, Serialize, Clone, Copy)]
 pub struct AxialCoords {
     pub q: i32,
     pub r: i32,
+}
+
+impl Debug for AxialCoords {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "(q:{},r:{})", self.q, self.r)
+    }
 }
 
 impl AxialCoords {
@@ -134,13 +237,9 @@ impl Hash for AxialCoords {
     }
 }
 
-pub fn is_within_grid(coords: AxialCoords, radius: i32) -> bool {
-    coords.q >= -radius && coords.q <= radius && coords.r >= -radius && coords.r <= radius
-}
-
 pub type PrecomputedNeighbors = HashMap<AxialCoords, [Option<AxialCoords>; 6]>;
 
-pub fn compute_neighboors(radius: i32) -> PrecomputedNeighbors {
+pub fn compute_neighboors(radius: u32) -> PrecomputedNeighbors {
     cube_spiral(&CubeCoords::center(), radius)
         .iter()
         .map(|coords| {

@@ -73,7 +73,7 @@ export async function render({ api, onReady }: RenderParams) {
     75,
     window.innerWidth / window.innerHeight,
     5,
-    1000
+    30_000
   );
 
   camera.position.set(0, 0, 200); // Elevated position
@@ -92,7 +92,7 @@ export async function render({ api, onReady }: RenderParams) {
   const controls = new OrbitControls(camera, renderer.domElement);
   controls.enableRotate = false;
   controls.minDistance = 10;
-  controls.maxDistance = 300;
+  controls.maxDistance = 20800;
   controls.mouseButtons = {
     LEFT: MOUSE.PAN,
   };
@@ -151,7 +151,7 @@ export async function render({ api, onReady }: RenderParams) {
           const user = ownerOf(gameData, tile);
           if (user) {
             (hex.material as MeshPhongMaterial).color.set(
-              hexagonColor(user.color, tile.strength)
+              hexagonColor(parseInt(user.color.slice(1), 16), tile.strength)
             );
           }
         } catch (e) {

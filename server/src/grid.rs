@@ -4,11 +4,7 @@
 
 // }
 
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
-
-use crate::coords::AxialCoords;
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
 pub struct InnerTileData {
@@ -25,9 +21,7 @@ pub struct TileData {
     pub strength: u8,
 }
 
-pub type TileMap = HashMap<AxialCoords, InnerTileData>;
-
 #[derive(Copy, Serialize, Debug, Clone)]
 pub struct GridSettings {
-    pub radius: i32,
+    pub radius: u32,
 }

@@ -104,7 +104,7 @@ async fn main() -> std::io::Result<()> {
 
     let game_data = GameData::init_from_config(&app_config, &users).await;
 
-    log::info!("Game data initialized: {game_data:?}");
+    // log::info!("Game data initialized: {game_data:?}");
 
     let clients = init_clients();
 

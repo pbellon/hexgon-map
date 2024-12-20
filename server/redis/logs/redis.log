@@ -1,0 +1,1142 @@
+1:C 20 Dec 2024 22:11:13.776 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:11:13.777 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:11:13.783 * Configuration loaded
+1:M 20 Dec 2024 22:11:13.787 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:11:13.790 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:11:13.792 * Server initialized
+1:M 20 Dec 2024 22:11:13.796 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:11:13.799 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:11:13.800 * RDB age 7679 seconds
+1:M 20 Dec 2024 22:11:13.802 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:11:13.845 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:11:13.847 * DB loaded from disk: 0.049 seconds
+1:M 20 Dec 2024 22:11:13.849 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:11:13.850 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:11:13.851 . 0 clients connected (0 replicas), 2870720 bytes in use
+1:M 20 Dec 2024 22:11:13.999 - Accepted 172.19.0.3:44210
+1:M 20 Dec 2024 22:11:18.873 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:11:18.875 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:11:23.892 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:11:23.894 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:11:28.918 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:11:28.921 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:11:33.945 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:11:33.948 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:11:38.967 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:11:38.969 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:11:44.070 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:11:44.072 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:11:49.095 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:11:49.096 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:11:54.113 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:11:54.115 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:11:59.135 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:11:59.136 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:04.155 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:04.157 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:09.183 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:09.251 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:14.290 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:14.292 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:19.313 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:19.323 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:24.343 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:24.345 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:29.365 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:29.367 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:34.386 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:34.389 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:39.474 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:39.481 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:44.520 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:44.521 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:49.542 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:49.546 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:54.565 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:54.567 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:12:59.591 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:12:59.600 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:13:04.619 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:13:04.620 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:13:09.704 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:13:09.705 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:13:14.754 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:13:14.756 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:13:19.780 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:13:19.783 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:13:24.809 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:13:24.811 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:13:29.830 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:13:29.832 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:13:34.853 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:13:34.860 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:13:39.956 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:13:39.958 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:13:45.004 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:13:45.008 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:13:50.033 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:13:50.042 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:signal-handler (1734732834) Received SIGTERM scheduling shutdown...
+1:C 20 Dec 2024 22:16:02.729 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:16:02.731 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:16:02.732 * Configuration loaded
+1:M 20 Dec 2024 22:16:02.734 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:16:02.737 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:16:02.739 * Server initialized
+1:M 20 Dec 2024 22:16:02.741 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:16:02.744 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:16:02.745 * RDB age 7968 seconds
+1:M 20 Dec 2024 22:16:02.746 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:16:02.785 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:16:02.786 * DB loaded from disk: 0.044 seconds
+1:M 20 Dec 2024 22:16:02.787 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:16:02.789 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:02.790 . 0 clients connected (0 replicas), 2870720 bytes in use
+1:M 20 Dec 2024 22:16:02.955 - Accepted 172.19.0.3:53454
+1:M 20 Dec 2024 22:16:07.807 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:07.808 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:16:12.908 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:12.918 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:16:17.946 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:17.948 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:16:22.964 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:22.975 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:16:27.992 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:27.994 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:16:33.011 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:33.012 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:16:38.030 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:38.038 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:16:43.142 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:43.143 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:16:48.172 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:48.179 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:16:53.198 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:53.199 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:16:58.220 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:16:58.225 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:03.244 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:03.245 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:08.264 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:08.265 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:13.366 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:13.373 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:18.400 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:18.409 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:23.428 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:23.430 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:28.447 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:28.456 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:33.767 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:34.226 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:39.430 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:39.431 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:44.534 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:44.539 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:49.563 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:49.565 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:54.581 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:54.591 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:17:59.611 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:17:59.613 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:04.630 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:04.632 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:09.652 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:09.664 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:14.770 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:14.771 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:19.795 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:19.797 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:24.815 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:24.817 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:29.835 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:29.837 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:34.856 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:34.858 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:39.884 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:39.885 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:44.992 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:44.992 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:50.018 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:50.020 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:18:55.038 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:18:55.042 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:19:00.066 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:00.068 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:19:05.085 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:05.086 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:19:10.105 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:10.106 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:19:15.209 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:15.210 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:19:20.237 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:20.238 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:19:25.257 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:25.258 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:signal-handler (1734733167) Received SIGTERM scheduling shutdown...
+1:C 20 Dec 2024 22:19:35.277 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:19:35.279 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:19:35.281 * Configuration loaded
+1:M 20 Dec 2024 22:19:35.283 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:19:35.286 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:19:35.287 * Server initialized
+1:M 20 Dec 2024 22:19:35.288 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:19:35.291 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:19:35.292 * RDB age 8181 seconds
+1:M 20 Dec 2024 22:19:35.293 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:19:35.335 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:19:35.337 * DB loaded from disk: 0.048 seconds
+1:M 20 Dec 2024 22:19:35.338 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:19:35.340 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:35.341 . 0 clients connected (0 replicas), 2870656 bytes in use
+1:M 20 Dec 2024 22:19:35.484 - Accepted 172.19.0.3:37876
+1:M 20 Dec 2024 22:19:40.427 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:40.428 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:19:45.450 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:45.456 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:19:50.478 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:50.494 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:19:55.512 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:19:55.517 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:00.537 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:00.538 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:05.555 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:05.556 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:10.637 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:10.639 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:15.663 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:15.674 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:20.694 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:20.696 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:25.712 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:25.713 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:30.728 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:30.730 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:35.744 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:35.745 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:40.829 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:40.830 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:45.850 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:45.852 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:50.870 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:50.875 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:20:55.891 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:20:55.897 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:21:00.914 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:00.916 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:21:05.931 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:05.931 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:21:11.011 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:11.012 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:21:16.039 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:16.041 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:21:21.059 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:21.060 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:21:26.077 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:26.077 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:21:31.094 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:31.096 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:M 20 Dec 2024 22:21:36.112 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:36.113 . 0 clients connected (0 replicas), 2870672 bytes in use
+1:C 20 Dec 2024 22:21:49.197 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:21:49.199 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:21:49.200 * Configuration loaded
+1:M 20 Dec 2024 22:21:49.202 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:21:49.205 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:21:49.206 * Server initialized
+1:M 20 Dec 2024 22:21:49.208 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:21:49.211 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:21:49.212 * RDB age 8315 seconds
+1:M 20 Dec 2024 22:21:49.214 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:21:49.254 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:21:49.256 * DB loaded from disk: 0.046 seconds
+1:M 20 Dec 2024 22:21:49.257 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:21:49.259 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:49.260 . 0 clients connected (0 replicas), 2870688 bytes in use
+1:M 20 Dec 2024 22:21:49.439 - Accepted 172.19.0.3:43784
+1:M 20 Dec 2024 22:21:54.278 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:54.279 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:21:59.299 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:21:59.304 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:22:04.329 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:04.330 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:22:09.345 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:09.346 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:22:14.435 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:14.436 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:22:19.454 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:19.457 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:22:24.472 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:24.473 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:22:29.489 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:29.499 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:C 20 Dec 2024 22:22:36.863 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:22:36.865 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:22:36.867 * Configuration loaded
+1:M 20 Dec 2024 22:22:36.869 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:22:36.871 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:22:36.873 * Server initialized
+1:M 20 Dec 2024 22:22:36.875 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:22:36.878 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:22:36.879 * RDB age 8362 seconds
+1:M 20 Dec 2024 22:22:36.881 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:22:36.920 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:22:36.924 * DB loaded from disk: 0.048 seconds
+1:M 20 Dec 2024 22:22:36.925 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:22:36.927 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:36.928 . 0 clients connected (0 replicas), 2870688 bytes in use
+1:M 20 Dec 2024 22:22:37.067 - Accepted 172.19.0.3:39756
+1:M 20 Dec 2024 22:22:42.016 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:42.017 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:22:47.037 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:47.038 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:22:52.057 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:52.059 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:22:57.075 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:22:57.076 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:02.091 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:02.092 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:07.112 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:07.113 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:12.198 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:12.200 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:17.221 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:17.222 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:22.238 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:22.239 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:22.329 - Accepted 172.19.0.3:38250
+1:M 20 Dec 2024 22:23:26.650 - Accepted 172.19.0.3:57188
+1:M 20 Dec 2024 22:23:26.663 - Accepted 172.19.0.3:57190
+1:M 20 Dec 2024 22:23:27.146 - Accepted 172.19.0.3:57202
+1:M 20 Dec 2024 22:23:27.157 - Accepted 172.19.0.3:57206
+1:M 20 Dec 2024 22:23:27.259 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:27.259 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:32.277 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:32.278 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:37.294 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:37.295 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:42.380 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:42.381 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:47.404 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:47.405 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:52.423 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:52.425 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:23:57.441 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:23:57.442 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:24:02.459 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:24:02.460 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:24:07.477 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:24:07.485 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:24:12.571 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:24:12.573 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:24:17.596 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:24:17.605 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:24:22.624 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:24:22.626 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:24:27.644 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:24:27.646 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:24:32.663 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:24:32.664 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:C 20 Dec 2024 22:25:00.468 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:25:00.470 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:25:00.472 * Configuration loaded
+1:M 20 Dec 2024 22:25:00.474 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:25:00.476 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:25:00.478 * Server initialized
+1:M 20 Dec 2024 22:25:00.480 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:25:00.483 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:25:00.484 * RDB age 8506 seconds
+1:M 20 Dec 2024 22:25:00.486 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:25:00.531 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:25:00.532 * DB loaded from disk: 0.051 seconds
+1:M 20 Dec 2024 22:25:00.533 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:25:00.535 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:00.536 . 0 clients connected (0 replicas), 2870784 bytes in use
+1:M 20 Dec 2024 22:25:00.704 - Accepted 172.19.0.3:51842
+1:M 20 Dec 2024 22:25:05.554 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:05.555 . 0 clients connected (0 replicas), 2870800 bytes in use
+1:M 20 Dec 2024 22:25:10.573 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:10.575 . 0 clients connected (0 replicas), 2870800 bytes in use
+1:M 20 Dec 2024 22:25:15.672 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:15.673 . 0 clients connected (0 replicas), 2870800 bytes in use
+1:M 20 Dec 2024 22:25:20.692 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:20.694 . 0 clients connected (0 replicas), 2870800 bytes in use
+1:M 20 Dec 2024 22:25:25.711 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:25.714 . 0 clients connected (0 replicas), 2870800 bytes in use
+1:M 20 Dec 2024 22:25:30.740 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:30.741 . 0 clients connected (0 replicas), 2870800 bytes in use
+1:M 20 Dec 2024 22:25:35.756 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:35.760 . 0 clients connected (0 replicas), 2870800 bytes in use
+1:C 20 Dec 2024 22:25:44.983 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:25:44.986 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:25:44.987 * Configuration loaded
+1:M 20 Dec 2024 22:25:44.989 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:25:44.991 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:25:44.992 * Server initialized
+1:M 20 Dec 2024 22:25:44.993 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:25:44.996 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:25:44.997 * RDB age 8550 seconds
+1:M 20 Dec 2024 22:25:44.998 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:25:45.052 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:25:45.054 * DB loaded from disk: 0.059 seconds
+1:M 20 Dec 2024 22:25:45.055 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:25:45.057 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:45.060 . 0 clients connected (0 replicas), 2870688 bytes in use
+1:M 20 Dec 2024 22:25:45.226 - Accepted 172.19.0.3:58550
+1:M 20 Dec 2024 22:25:50.082 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:50.099 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:25:55.119 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:25:55.126 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:00.143 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:00.144 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:05.163 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:05.181 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:10.199 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:10.200 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:15.287 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:15.288 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:20.307 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:20.308 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:25.326 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:25.327 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:30.343 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:30.344 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:35.360 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:35.361 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:40.376 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:40.378 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:45.478 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:45.479 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:50.500 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:50.511 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:26:55.531 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:26:55.533 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:27:00.550 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:00.551 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:27:05.567 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:05.570 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:27:10.591 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:10.601 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:C 20 Dec 2024 22:27:19.992 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:27:19.994 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:27:19.996 * Configuration loaded
+1:M 20 Dec 2024 22:27:19.998 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:27:20.000 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:27:20.002 * Server initialized
+1:M 20 Dec 2024 22:27:20.004 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:27:20.007 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:27:20.008 * RDB age 8645 seconds
+1:M 20 Dec 2024 22:27:20.010 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:27:20.051 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:27:20.052 * DB loaded from disk: 0.047 seconds
+1:M 20 Dec 2024 22:27:20.053 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:27:20.055 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:20.056 . 0 clients connected (0 replicas), 2870688 bytes in use
+1:M 20 Dec 2024 22:27:20.235 - Accepted 172.19.0.3:49944
+1:M 20 Dec 2024 22:27:25.074 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:25.075 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:27:30.098 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:30.102 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:27:35.119 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:35.121 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:27:40.138 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:40.139 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:27:45.225 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:45.226 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:27:50.245 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:50.247 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:27:55.266 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:27:55.268 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:00.290 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:00.295 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:05.312 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:05.313 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:10.329 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:10.330 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:15.423 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:15.426 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:15.657 - Accepted 172.19.0.3:33294
+1:C 20 Dec 2024 22:28:23.095 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:28:23.097 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:28:23.100 * Configuration loaded
+1:M 20 Dec 2024 22:28:23.102 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:28:23.104 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:28:23.106 * Server initialized
+1:M 20 Dec 2024 22:28:23.108 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:28:23.111 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:28:23.112 * RDB age 8709 seconds
+1:M 20 Dec 2024 22:28:23.114 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:28:23.152 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:28:23.156 * DB loaded from disk: 0.047 seconds
+1:M 20 Dec 2024 22:28:23.158 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:28:23.161 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:23.169 . 0 clients connected (0 replicas), 2870688 bytes in use
+1:M 20 Dec 2024 22:28:23.349 - Accepted 172.19.0.3:33302
+1:M 20 Dec 2024 22:28:28.189 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:28.191 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:33.209 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:33.210 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:38.228 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:38.231 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:43.324 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:43.326 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:48.359 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:48.360 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:53.378 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:53.380 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:28:58.399 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:28:58.405 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:03.434 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:03.435 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:08.453 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:08.455 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:13.549 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:13.551 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:18.585 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:18.587 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:23.604 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:23.605 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:28.624 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:28.625 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:33.645 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:33.646 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:38.667 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:38.676 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:43.794 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:43.806 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:48.839 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:48.841 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:53.858 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:53.861 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:29:58.879 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:29:58.882 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:30:03.901 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:30:03.902 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:30:08.920 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:30:08.922 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:signal-handler (1734733810) Received SIGTERM scheduling shutdown...
+1:M 20 Dec 2024 22:30:10.730 * User requested shutdown...
+1:M 20 Dec 2024 22:30:10.731 * Saving the final RDB snapshot before exiting.
+1:C 20 Dec 2024 22:30:17.460 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:30:17.462 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:30:17.463 * Configuration loaded
+1:M 20 Dec 2024 22:30:17.465 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:30:17.469 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:30:17.471 * Server initialized
+1:M 20 Dec 2024 22:30:17.473 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:30:17.476 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:30:17.478 * RDB age 8823 seconds
+1:M 20 Dec 2024 22:30:17.479 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:30:17.522 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:30:17.525 * DB loaded from disk: 0.051 seconds
+1:M 20 Dec 2024 22:30:17.527 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:30:17.529 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:30:17.530 . 0 clients connected (0 replicas), 2870592 bytes in use
+1:M 20 Dec 2024 22:30:17.716 - Accepted 172.19.0.3:35322
+1:M 20 Dec 2024 22:30:22.550 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:30:22.553 . 0 clients connected (0 replicas), 2870608 bytes in use
+1:C 20 Dec 2024 22:30:31.210 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:30:31.212 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:30:31.214 * Configuration loaded
+1:M 20 Dec 2024 22:30:31.216 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:30:31.219 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:30:31.221 * Server initialized
+1:M 20 Dec 2024 22:30:31.223 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:30:31.226 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:30:31.228 * RDB age 8837 seconds
+1:M 20 Dec 2024 22:30:31.229 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:30:31.273 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:30:31.275 * DB loaded from disk: 0.050 seconds
+1:M 20 Dec 2024 22:30:31.276 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:30:31.278 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:30:31.279 . 0 clients connected (0 replicas), 2870688 bytes in use
+1:M 20 Dec 2024 22:30:31.464 - Accepted 172.19.0.3:49724
+1:M 20 Dec 2024 22:30:36.297 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:30:36.299 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:30:41.315 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:30:41.316 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:30:46.408 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:30:46.411 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:30:51.432 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:30:51.433 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:30:56.448 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:30:56.451 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:01.472 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:01.484 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:06.500 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:06.501 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:11.517 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:11.521 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:16.615 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:16.616 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:21.635 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:21.636 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:26.652 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:26.653 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:31.669 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:31.670 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:36.685 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:36.696 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:41.713 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:41.714 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:46.804 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:46.805 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:51.824 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:51.832 . 0 clients connected (0 replicas), 2870704 bytes in use
+1:M 20 Dec 2024 22:31:55.334 - Accepted 127.0.0.1:34376
+1:M 20 Dec 2024 22:31:56.851 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:31:56.864 . 1 clients connected (0 replicas), 2918184 bytes in use
+1:M 20 Dec 2024 22:32:01.880 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:01.881 . 1 clients connected (0 replicas), 2942872 bytes in use
+1:M 20 Dec 2024 22:32:06.895 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:06.897 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:32:11.915 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:11.924 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:32:17.010 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:17.019 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:32:22.043 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:22.051 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:32:27.068 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:27.069 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:32:32.086 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:32.087 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:32:37.104 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:37.106 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:32:42.192 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:42.193 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:32:47.212 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:47.223 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:32:52.252 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:52.261 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:32:57.282 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:32:57.283 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:02.300 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:02.301 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:07.323 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:07.337 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:12.422 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:12.422 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:17.445 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:17.457 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:22.477 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:22.480 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:27.502 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:27.509 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:32.528 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:32.529 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:37.546 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:37.552 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:42.638 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:42.648 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:47.675 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:47.678 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:52.703 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:52.705 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:33:57.723 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:33:57.725 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:02.742 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:02.744 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:07.761 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:07.767 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:12.852 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:12.853 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:17.874 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:17.875 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:22.893 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:22.894 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:27.911 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:27.912 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:32.930 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:32.933 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:37.948 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:37.955 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:43.041 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:43.042 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:48.067 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:48.069 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:53.089 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:53.091 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:34:58.109 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:34:58.111 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:03.131 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:03.134 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:08.151 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:08.155 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:13.242 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:13.245 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:18.269 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:18.271 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:23.290 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:23.292 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:28.310 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:28.312 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:33.336 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:33.347 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:38.364 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:38.373 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:43.457 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:43.458 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:48.479 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:48.491 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:53.508 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:53.509 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:35:58.525 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:35:58.526 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:03.541 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:03.542 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:08.557 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:08.559 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:13.644 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:13.648 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:18.671 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:18.681 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:23.700 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:23.702 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:28.719 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:28.728 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:33.744 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:33.746 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:38.763 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:38.766 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:43.851 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:43.852 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:48.872 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:48.881 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:53.900 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:53.902 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:36:58.920 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:36:58.932 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:03.950 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:03.952 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:08.969 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:08.972 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:14.062 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:14.070 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:19.092 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:19.102 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:24.122 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:24.123 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:29.141 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:29.144 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:34.165 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:34.166 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:39.181 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:39.184 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:44.269 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:44.272 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:49.294 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:49.296 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:54.324 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:54.325 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:37:59.342 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:37:59.344 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:04.363 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:04.366 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:09.383 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:09.394 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:14.483 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:14.485 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:19.506 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:19.507 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:24.524 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:24.525 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:29.542 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:29.543 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:34.559 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:34.560 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:39.575 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:39.577 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:44.665 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:44.667 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:49.688 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:49.689 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:54.708 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:54.711 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:38:59.729 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:38:59.735 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:04.755 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:04.757 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:09.774 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:09.776 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:14.863 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:14.864 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:19.883 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:19.885 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:24.903 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:24.904 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:29.923 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:29.928 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:34.947 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:34.955 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:39.973 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:39.975 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:45.059 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:45.061 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:50.083 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:50.096 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:39:55.116 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:39:55.118 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:00.135 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:00.145 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:05.162 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:05.167 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:10.183 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:10.195 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:15.280 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:15.284 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:20.303 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:20.313 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:25.334 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:25.338 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:30.361 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:30.370 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:35.388 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:35.389 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:40.407 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:40.409 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:45.504 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:45.505 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:50.527 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:50.530 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:40:55.548 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:40:55.549 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:00.566 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:00.567 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:05.585 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:05.586 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:10.608 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:10.613 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:15.700 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:15.701 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:20.720 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:20.722 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:25.741 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:25.742 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:30.765 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:30.770 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:35.789 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:35.804 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:40.821 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:40.825 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:45.918 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:45.919 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:50.948 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:50.953 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:41:55.972 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:41:55.973 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:00.993 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:00.997 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:06.020 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:06.021 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:11.038 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:11.039 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:16.128 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:16.129 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:21.148 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:21.149 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:26.166 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:26.168 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:31.183 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:31.186 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:36.203 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:36.204 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:41.220 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:41.221 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:46.304 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:46.305 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:51.325 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:51.335 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:42:56.351 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:42:56.353 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:01.369 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:01.371 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:06.386 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:06.393 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:11.408 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:11.411 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:16.497 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:16.499 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:21.518 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:21.519 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:26.538 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:26.539 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:31.556 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:31.557 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:36.574 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:36.575 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:41.592 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:41.593 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:46.681 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:46.682 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:51.703 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:51.708 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:43:56.732 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:43:56.734 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:01.752 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:01.761 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:06.777 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:06.778 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:11.794 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:11.796 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:16.885 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:16.886 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:21.912 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:21.913 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:26.930 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:26.931 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:31.948 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:31.953 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:36.969 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:36.970 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:41.986 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:41.987 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:47.074 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:47.084 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:52.104 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:52.112 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:44:57.135 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:44:57.147 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:02.171 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:02.171 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:07.191 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:07.203 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:12.221 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:12.224 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:17.314 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:17.320 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:22.345 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:22.346 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:27.363 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:27.364 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:32.381 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:32.383 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:37.400 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:37.408 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:42.427 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:42.430 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:47.519 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:47.520 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:52.540 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:52.541 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:45:57.558 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:45:57.560 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:02.579 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:02.581 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:07.598 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:07.599 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:12.615 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:12.616 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:17.707 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:17.709 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:22.735 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:22.736 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:27.752 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:27.761 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:32.780 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:32.781 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:37.799 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:37.802 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:42.818 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:42.819 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:47.909 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:47.911 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:52.933 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:52.934 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:46:57.951 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:46:57.952 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:02.967 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:02.968 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:07.984 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:07.985 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:13.001 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:13.005 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:18.092 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:18.093 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:23.112 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:23.114 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:28.131 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:28.133 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:33.148 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:33.149 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:38.165 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:38.170 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:43.186 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:43.188 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:48.279 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:48.288 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:53.310 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:53.325 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:47:58.345 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:47:58.354 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:03.371 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:03.373 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:08.391 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:08.400 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:13.420 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:13.428 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:18.521 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:18.523 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:23.542 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:23.544 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:28.561 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:28.562 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:33.580 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:33.583 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:38.599 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:38.600 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:43.622 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:43.632 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:48.721 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:48.732 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:53.749 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:53.758 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:48:58.774 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:48:58.776 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:03.799 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:03.800 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:08.816 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:08.817 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:13.832 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:13.835 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:18.923 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:18.924 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:23.941 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:23.942 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:28.962 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:28.963 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:33.980 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:33.980 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:39.000 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:39.001 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:44.017 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:44.018 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:49.106 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:49.108 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:54.125 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:54.126 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:49:59.142 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:49:59.143 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:04.160 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:04.161 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:09.175 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:09.187 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:14.201 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:14.203 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:19.293 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:19.294 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:24.312 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:24.316 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:29.333 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:29.334 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:34.350 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:34.353 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:39.367 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:39.376 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:44.392 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:44.393 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:49.482 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:49.486 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:54.504 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:54.506 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:50:59.521 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:50:59.526 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:51:04.542 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:04.543 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:51:09.560 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:09.567 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:51:14.585 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:14.587 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:51:19.683 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:19.686 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:51:24.703 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:24.705 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:51:29.721 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:29.723 . 1 clients connected (0 replicas), 2922400 bytes in use
+1:M 20 Dec 2024 22:51:34.739 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:34.740 . 1 clients connected (0 replicas), 2942840 bytes in use
+1:M 20 Dec 2024 22:51:39.755 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:39.756 . 1 clients connected (0 replicas), 2922368 bytes in use
+1:M 20 Dec 2024 22:51:44.841 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:44.842 . 1 clients connected (0 replicas), 2922368 bytes in use
+1:M 20 Dec 2024 22:51:49.863 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:49.865 . 1 clients connected (0 replicas), 2922368 bytes in use
+1:M 20 Dec 2024 22:51:54.882 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:54.885 . 1 clients connected (0 replicas), 2922368 bytes in use
+1:M 20 Dec 2024 22:51:59.901 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:51:59.904 . 1 clients connected (0 replicas), 2922368 bytes in use
+1:M 20 Dec 2024 22:52:04.920 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:04.921 . 1 clients connected (0 replicas), 2922368 bytes in use
+1:M 20 Dec 2024 22:52:09.937 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:09.938 . 1 clients connected (0 replicas), 2922368 bytes in use
+1:M 20 Dec 2024 22:52:15.023 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:15.026 . 1 clients connected (0 replicas), 2922368 bytes in use
+1:C 20 Dec 2024 22:52:19.688 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:52:19.689 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:52:19.691 * Configuration loaded
+1:M 20 Dec 2024 22:52:19.692 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:52:19.694 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:52:19.696 * Server initialized
+1:M 20 Dec 2024 22:52:19.697 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:52:19.700 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:52:19.701 * RDB age 10145 seconds
+1:M 20 Dec 2024 22:52:19.702 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:52:19.754 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:52:19.756 * DB loaded from disk: 0.057 seconds
+1:M 20 Dec 2024 22:52:19.757 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:52:19.758 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:19.759 . 0 clients connected (0 replicas), 2870720 bytes in use
+1:M 20 Dec 2024 22:52:19.919 - Accepted 172.19.0.3:60064
+1:M 20 Dec 2024 22:52:24.779 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:24.780 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:52:29.796 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:29.802 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:52:34.824 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:34.828 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:52:39.844 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:39.844 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:52:44.929 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:44.931 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:52:49.952 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:49.953 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:C 20 Dec 2024 22:52:52.883 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+1:C 20 Dec 2024 22:52:52.885 * Redis version=7.4.1, bits=64, commit=00000000, modified=0, pid=1, just started
+1:C 20 Dec 2024 22:52:52.893 * Configuration loaded
+1:M 20 Dec 2024 22:52:52.896 * monotonic clock: POSIX clock_gettime
+1:M 20 Dec 2024 22:52:52.900 * Running mode=standalone, port=6379.
+1:M 20 Dec 2024 22:52:52.902 * Server initialized
+1:M 20 Dec 2024 22:52:52.903 . The AOF directory appendonlydir doesn't exist
+1:M 20 Dec 2024 22:52:52.906 * Loading RDB produced by version 7.4.1
+1:M 20 Dec 2024 22:52:52.907 * RDB age 10178 seconds
+1:M 20 Dec 2024 22:52:52.909 * RDB memory usage when created 3.85 Mb
+1:M 20 Dec 2024 22:52:52.957 * Done loading RDB, keys loaded: 16013, keys expired: 0.
+1:M 20 Dec 2024 22:52:52.960 * DB loaded from disk: 0.055 seconds
+1:M 20 Dec 2024 22:52:52.961 * Ready to accept connections tcp
+1:M 20 Dec 2024 22:52:52.962 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:52.963 . 0 clients connected (0 replicas), 2870720 bytes in use
+1:M 20 Dec 2024 22:52:53.131 - Accepted 172.19.0.3:53052
+1:M 20 Dec 2024 22:52:57.980 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:52:57.982 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:02.999 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:03.009 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:08.031 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:08.031 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:13.046 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:13.050 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:18.139 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:18.140 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:23.157 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:23.159 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:28.184 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:28.186 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:33.211 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:33.213 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:38.229 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:38.231 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:43.248 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:43.249 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:48.336 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:48.337 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:53.361 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:53.363 . 0 clients connected (0 replicas), 2870736 bytes in use
+1:M 20 Dec 2024 22:53:58.381 - DB 0: 16013 keys (0 volatile) in 16384 slots HT.
+1:M 20 Dec 2024 22:53:58.382 . 0 clients connected (0 replicas), 2870736 bytes in use

@@ -6,6 +6,7 @@ use actix_web_httpauth::extractors::basic::BasicAuth;
 use pixelstratwar::config::GameConfig;
 use pixelstratwar::coords::AxialCoords;
 use pixelstratwar::game::GameData;
+use pixelstratwar::store::{init_redis_client, RedisHandler};
 use pixelstratwar::user::GameUsers;
 use pixelstratwar::websocket::{
     init_clients, notify_new_user, notify_score_change, tile_change_message, ws_handler,
@@ -19,6 +20,7 @@ async fn post_tile(
     game_data: web::Data<GameData>,
     users: web::Data<GameUsers>,
     clients: web::Data<ClientList>,
+    redis_client: web::Data<redis::Client>,
     user_id: String,
     credentials: BasicAuth,
 ) -> impl Responder {
@@ -30,7 +32,19 @@ async fn post_tile(
     if users.is_valid_token_for_user(user_id_auth, token).await {
         // log::info!("Yep it's valid");
         let coords = path.into_inner();
-        let updated_tiles = game_data.handle_click(&coords, &user_id).await;
+
+        let updated_tiles = match game_data
+            .handle_click(&**redis_client, &coords, &user_id)
+            .await
+        {
+            Ok(value) => value,
+            Err(e) => {
+                return HttpResponse::InternalServerError().body(format!(
+                    "An error occured while handling click on {coords:?}.\nError: {e}"
+                ));
+            }
+        };
+
         // log::info!("Updated tiles => {updated_tiles:?}");
 
         for client in clients.lock().unwrap().iter() {
@@ -39,8 +53,9 @@ async fn post_tile(
             });
         }
 
-        let new_score = game_data.score_of_user(&user_id).await;
-        notify_score_change(&clients, &user_id, new_score);
+        let new_score = redis_client.count_tiles_by_user(&user_id).await.unwrap();
+
+        notify_score_change(&clients, &user_id, new_score as u32);
 
         return HttpResponse::Ok().body("Tile updated");
     } else {
@@ -65,10 +80,11 @@ struct BatchTilesQuery {
 
 #[get("/tiles")]
 async fn get_batch_tiles(
+    redis_client: web::Data<redis::Client>,
     game_data: web::Data<GameData>,
     query: web::Query<BatchTilesQuery>,
 ) -> impl Responder {
-    match game_data.compute_batch(query.batch).await {
+    match game_data.compute_batch(&**redis_client, query.batch).await {
         Ok(computed_batch) => HttpResponse::Ok()
             .content_type("application/json")
             .json(computed_batch),
@@ -128,14 +144,19 @@ fn cors_middleware(app_config: &GameConfig) -> Cors {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    log::info!("Initializing game");
+
     let users = GameUsers::new();
     let app_config = GameConfig::read_config_from_env();
+
+    let redis_client = init_redis_client(&app_config).await.unwrap();
+    log::info!("Redis Client initialized");
 
     std::env::set_var("RUST_LOG", "info");
     std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
 
-    let game_data = GameData::init_from_config(&app_config, &users).await;
+    let game_data = GameData::init_from_config(&redis_client, &app_config, &users).await;
 
     // log::info!("Game data initialized: {game_data:?}");
 
@@ -154,6 +175,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(clients.clone()))
             .app_data(web::Data::new(app_config.clone()))
             .app_data(web::Data::new(users.clone()))
+            .app_data(web::Data::new(redis_client.clone()))
             // protected
             .service(post_tile)
             .service(get_batch_list)

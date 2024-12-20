@@ -1,28 +1,31 @@
 use std::hash::DefaultHasher;
 use std::hash::{Hash, Hasher};
 
+use crate::store::RedisHandler;
 use crate::user::User;
-use crate::{game::GameData, grid::InnerTileData};
+use crate::{game::GameData, game::InnerTileData};
 
-pub async fn create_benchmark_game_data(benchmark_user: &User, radius: u32) -> GameData {
-    let data = GameData::new(radius);
+pub async fn create_benchmark_game_data<R: RedisHandler>(
+    redis_client: &R,
+    benchmark_user: &User,
+    radius: u32,
+    grid_rows_and_cols: u8,
+) -> GameData {
+    let data = GameData::new(radius, grid_rows_and_cols);
 
-    let keys: Vec<_> = {
-        let tiles_r = data.tiles.read().await;
-        tiles_r.keys().cloned().collect()
-    };
-    {
-        let mut tiles_w = data.tiles.write().await;
-        for coords in keys {
-            tiles_w.insert(
-                coords,
+    for (coords, _) in data.precomputed_neighbors.clone() {
+        redis_client
+            .set_tile(
+                &coords,
                 InnerTileData {
                     user_id: benchmark_user.id.clone(),
                     damage: 0,
                 },
-            );
-        }
+            )
+            .await
+            .expect("Should be able to create tile");
     }
+
     data
 }
 

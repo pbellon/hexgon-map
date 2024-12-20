@@ -1,11 +1,41 @@
 services:
   rust-app:
     build: .
-    container_name: pixelwar_backend_container
+    container_name: pixelstratwar_backend_container
     ports:
       - "8080:8080" # Expose the port if your app needs it
     volumes:
       - .:/app # Mount the current directory to /app inside the container for hot-reloading
     environment:
+      - GRID_BATCH_DIV=10
       - RUST_LOG=debug
-    command: ./pixelstratwar_backend
+      - RUST_BACKTRACE=1
+      - actix_web=debug
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - redis
+    command: ./pixelstratwar
+    networks:
+      - app-network
+
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis_container
+    ports:
+      - "6379:6379" # Expose Redis port for local testing
+      - "8001:8001"
+    volumes:
+      - ./redis:/usr/local/etc/redis
+      - cache:/data # Persist Redis data
+    command: redis-stack-server /usr/local/etc/redis/redis.conf
+    networks:
+      - app-network
+    restart: unless-stopped # Optional: ensure the service restarts automatically
+
+volumes:
+  cache:
+    driver: local
+
+networks:
+  app-network:
+    driver: bridge

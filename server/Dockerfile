@@ -26,9 +26,9 @@ FROM debian:bookworm-slim
 WORKDIR /usr/src/app
 
 # Copy the built binary from the previous stage
-COPY --from=builder /usr/src/app/target/release/pixelstratwar_backend pixelstratwar_backend
+COPY --from=builder /usr/src/app/target/release/pixelstratwar pixelstratwar
 
 # Command to run the application
-CMD ["./pixelstratwar_backend"]
+CMD ["./pixelstratwar"]
 
 EXPOSE 8080

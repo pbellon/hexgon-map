@@ -204,6 +204,16 @@ impl AxialCoords {
         Self { q, r }
     }
 
+    pub fn as_redis_key(&self) -> String {
+        let q = self.q.abs();
+        let r = self.r.abs();
+
+        let prefq = if self.q >= 0 { "" } else { "m" };
+        let prefr = if self.r >= 0 { "" } else { "m" };
+
+        format!("{prefq}{q}_{prefr}{r}")
+    }
+
     pub fn center() -> Self {
         Self::new(0, 0)
     }

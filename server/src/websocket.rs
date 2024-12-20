@@ -12,7 +12,7 @@ use actix_web::{
 };
 use actix_web_actors::ws::{self, Message as WsMessage, ProtocolError, WebsocketContext};
 
-use crate::{coords::AxialCoords, grid::TileData};
+use crate::{coords::AxialCoords, game::TileData};
 
 /// Type alias for the list of WebSocket clients
 pub type ClientList = Arc<Mutex<HashSet<Addr<MyWebSocket>>>>;

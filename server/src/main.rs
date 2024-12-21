@@ -6,7 +6,7 @@ use actix_web_httpauth::extractors::basic::BasicAuth;
 use pixelstratwar::config::GameConfig;
 use pixelstratwar::coords::AxialCoords;
 use pixelstratwar::game::GameData;
-use pixelstratwar::store::{init_redis_client, RedisHandler};
+use pixelstratwar::store::{self, RedisHandler};
 use pixelstratwar::user::GameUsers;
 use pixelstratwar::websocket::{
     init_clients, notify_new_user, notify_score_change, tile_change_message, ws_handler,
@@ -27,10 +27,7 @@ async fn post_tile(
     let user_id_auth = credentials.user_id();
     let token: &str = credentials.password().unwrap_or("");
 
-    // log::info!("user_id({user_id}) - token({token})");
-
     if users.is_valid_token_for_user(user_id_auth, token).await {
-        // log::info!("Yep it's valid");
         let coords = path.into_inner();
 
         let updated_tiles = match game_data
@@ -45,8 +42,6 @@ async fn post_tile(
             }
         };
 
-        // log::info!("Updated tiles => {updated_tiles:?}");
-
         for client in clients.lock().unwrap().iter() {
             updated_tiles.iter().for_each(|(coords, tile)| {
                 client.do_send(MyBinaryMessage(tile_change_message(&coords, &tile)));
@@ -59,15 +54,12 @@ async fn post_tile(
 
         return HttpResponse::Ok().body("Tile updated");
     } else {
-        // log::info!("Nope, it's not valid returning unauthorized");
         return HttpResponse::Unauthorized().body("Invalid token");
     }
 }
 
 #[get("/settings")]
 async fn get_game_settings(game_data: web::Data<GameData>) -> impl Responder {
-    log::info!("OK?");
-
     HttpResponse::Ok()
         .content_type("application/json")
         .json(game_data.settings)
@@ -144,21 +136,18 @@ fn cors_middleware(app_config: &GameConfig) -> Cors {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    log::info!("Initializing game");
-
     let users = GameUsers::new();
     let app_config = GameConfig::read_config_from_env();
 
-    let redis_client = init_redis_client(&app_config).await.unwrap();
-    log::info!("Redis Client initialized");
+    let redis_client = store::init_redis_client(&app_config).await.unwrap();
+
+    let _ = store::init_redis_indices(&redis_client).await.unwrap();
 
     std::env::set_var("RUST_LOG", "info");
     std::env::set_var("RUST_BACKTRACE", "1");
     env_logger::init();
 
     let game_data = GameData::init_from_config(&redis_client, &app_config, &users).await;
-
-    // log::info!("Game data initialized: {game_data:?}");
 
     let clients = init_clients();
 
@@ -188,7 +177,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(logger)
             .wrap(cors_middleware(&app_config))
     })
-    .workers(350)
+    .workers(512)
     .bind(("0.0.0.0", 8080))?
     .run()
     .await

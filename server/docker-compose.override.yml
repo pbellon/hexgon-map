@@ -9,11 +9,10 @@ services:
     environment:
       - WITH_REDIS_TESTS=true
       - RUST_LOG=debug
-      - RUST_BACKTRACE=1
       - REDIS_URL=redis://redis:6379
     depends_on:
       - redis
-    command: ["cargo", "test"]
+    command: ["cargo", "test", "--", "--test-threads=1"]
     networks:
       - app-network
 

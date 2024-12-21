@@ -34,6 +34,11 @@ services:
     command: redis-stack-server /usr/local/etc/redis/redis.conf
     networks:
       - app-network
+    healthcheck:
+      test: redis-cli ping
+      interval: 3s
+      timeout: 5s
+      retries: 5
     restart: unless-stopped # Optional: ensure the service restarts automatically
 
 volumes:

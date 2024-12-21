@@ -3,15 +3,20 @@ use std::sync::Arc;
 use pixelstratwar::{
     config::GameConfig,
     coords::AxialCoords,
-    game::{GameData, InnerTileData},
-    store::{init_redis_client, RedisHandler},
-    test_utils::mocks::MockRedisHandler,
+    game::GameData,
+    store::{self, RedisHandler},
+    test_utils::{self, mocks::MockRedisHandler, utils::are_coords_in_vec},
 };
 
 async fn redis_client_or_mock() -> Arc<dyn RedisHandler> {
+    let _ = env_logger::try_init();
+
     let app_config = GameConfig::read_config_from_env();
+
     if app_config.with_redis_tests {
-        return Arc::new(init_redis_client(&app_config).await.unwrap());
+        let redis = store::init_redis_client(&app_config).await.unwrap();
+        let _ = store::init_redis_indices(&redis).await.unwrap();
+        return Arc::new(redis);
     }
 
     return Arc::new(MockRedisHandler::new());
@@ -35,25 +40,120 @@ pub async fn contiguous_neighbors_of_tile_empty() {
     );
 }
 
-fn check_as_coords_in_vec(
-    tiles: &Vec<(AxialCoords, InnerTileData)>,
-    coords_to_check: &AxialCoords,
-) -> bool {
-    match tiles.iter().find(|(coords, _)| coords == coords_to_check) {
-        Some(_) => true,
-        None => false,
-    }
+#[tokio::test]
+pub async fn test_fetch_within() {
+    let game_data = GameData::new(10, 2);
+    let mock_redis = redis_client_or_mock().await;
+
+    let center = AxialCoords::center();
+
+    let updated_tiles = game_data
+        .handle_click(mock_redis.as_ref(), &center, "first_user_id")
+        .await
+        .expect("Should be able to click on (0,0)");
+
+    let nb_updated = updated_tiles.len();
+    // check we have one updated tile
+    assert!(
+        nb_updated == 1 && are_coords_in_vec(&updated_tiles, &center).is_some(),
+        "Updated tiles should have one element (got {nb_updated}) and contain (0,0)",
+    );
+
+    game_data
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, 1),
+            "first_user_id",
+        )
+        .await
+        .expect("Should be able to click on (0,1)");
+
+    game_data
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, 2),
+            "first_user_id",
+        )
+        .await
+        .expect("Should be able to click on (0, 2)");
+    game_data
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, 3),
+            "first_user_id",
+        )
+        .await
+        .expect("Should be able to click on (0, 3)");
+
+    let prefetched = game_data
+        .fetch_within(mock_redis.as_ref(), &center)
+        .await
+        .expect("Should be able to fetch within 2 for (0,0)");
+
+    let center_t = prefetched
+        .get(&center)
+        .expect("Fetched tiles hashmap should contain (0,0)");
+    assert!(
+        center_t.user_id == "first_user_id".to_string() && center_t.damage == 0,
+        "Prefetched data should contain center with expected data"
+    );
+
+    let zero_one_t = prefetched.get(&AxialCoords::new(0, 1)).expect(&format!(
+        "Prefeteched should contain (0,1),\n\tcurrent state: {prefetched:?}"
+    ));
+
+    assert!(
+        zero_one_t.user_id == "first_user_id".to_string() && zero_one_t.damage == 0,
+        "(0, 1) should be owned by first user and have 0 damage, got {zero_one_t:?}"
+    );
+
+    let zero_two_t = prefetched
+        .get(&AxialCoords::new(0, 2))
+        .expect("Prefetched should contain (0,2)");
+    assert!(
+        zero_two_t.user_id == "first_user_id".to_string() && zero_two_t.damage == 0,
+        "(0,2) should be owned by first user and have 0 damage, got {zero_two_t:?}"
+    );
+
+    assert!(
+        prefetched.get(&AxialCoords::new(0, 3)).is_none(),
+        "Prefeteched hashmap should not contain (0,3) because not in 2 radius"
+    );
+
+    let _ = mock_redis.flushdb().await.unwrap();
 }
 
+/// Scenario, format: [<[A-Z]:user> - (<[0-9]+:q>,<[0-9]+:r>):coords], each list item
+/// is a click on the grid
+/// 1. [A, (0, 0)]
+/// 2. [A, (0,-1)]
+/// 3. [A, (0,-2)] // at this point (0,0) should have 3 contiguous neighbors
+/// 5. [A, (0,-3)] // (0,0) should still have 3 contiguous neighbors
+/// 6. [B, (0, 1)]
+/// 7. [B, (0, 2)]
+/// 8. [A, (0, 1)] => should damage (0,1)
+/// 9. [A, (0, 1)] => should take ownership of (0,1)
+/// 10. [A, (-2, 0)] => within radius of (0,0) but now contiguous
+/// 11. [B, (-2, 0)] => B should take ownership directly since the tile should have a strength of 1
 #[tokio::test]
 pub async fn contiguous_neighbors_of_tile_with_clicks() {
     let game_data = GameData::new(10, 2);
     let mock_redis = redis_client_or_mock().await;
 
-    game_data
-        .handle_click(mock_redis.as_ref(), &AxialCoords::center(), "first_user_id")
+    let center = AxialCoords::center();
+
+    let updated_tiles = game_data
+        .handle_click(mock_redis.as_ref(), &center, "first_user_id")
         .await
-        .unwrap();
+        .expect("Should be able to click on (0,0)");
+
+    let nb_updated = updated_tiles.len();
+
+    // check we have one updated tile
+    assert!(
+        nb_updated == 1 && test_utils::utils::are_coords_in_vec(&updated_tiles, &center).is_some(),
+        "Updated tiles should have one element (got {nb_updated}) and contain (0,0)",
+    );
 
     game_data
         .handle_click(
@@ -62,7 +162,7 @@ pub async fn contiguous_neighbors_of_tile_with_clicks() {
             "first_user_id",
         )
         .await
-        .unwrap();
+        .expect("Should be able to click on (0,-1)");
 
     game_data
         .handle_click(
@@ -71,7 +171,25 @@ pub async fn contiguous_neighbors_of_tile_with_clicks() {
             "first_user_id",
         )
         .await
-        .unwrap();
+        .expect("Should be able to click on (0, -2)");
+
+    let prefetched = game_data
+        .fetch_within(mock_redis.as_ref(), &center)
+        .await
+        .expect("Should be able to fetch within 2 for (0,0)");
+
+    let (contiguous_tiles, nb) =
+        game_data.contiguous_neighbors_of_tile(&prefetched, &center, "first_user_id", 2);
+
+    assert!(
+        nb == 2,
+        "Contiguous tile should contain 2 elements (got {nb})"
+    );
+
+    assert!(
+        are_coords_in_vec(&contiguous_tiles, &center).is_none(),
+        "Contiguous tiles should not contain (0,0) tile because it's center of the contiguity check",
+    );
 
     game_data
         .handle_click(
@@ -80,7 +198,7 @@ pub async fn contiguous_neighbors_of_tile_with_clicks() {
             "first_user_id",
         )
         .await
-        .unwrap();
+        .expect("Should be able to click on (0, -1)");
 
     game_data
         .handle_click(
@@ -89,7 +207,7 @@ pub async fn contiguous_neighbors_of_tile_with_clicks() {
             "second_user_id",
         )
         .await
-        .unwrap();
+        .expect("Should be able to click on (0,1)");
 
     game_data
         .handle_click(
@@ -98,13 +216,15 @@ pub async fn contiguous_neighbors_of_tile_with_clicks() {
             "first_user_id",
         )
         .await
-        .unwrap();
+        .expect("Should be able to click on (1,0)");
 
     let coords = AxialCoords::center();
+
     let prefetch = game_data
         .fetch_within(mock_redis.as_ref(), &coords)
         .await
-        .unwrap();
+        .expect("Should be able to fetch all tiles");
+
     let (tiles, nb) =
         game_data.contiguous_neighbors_of_tile(&prefetch, &coords, "first_user_id", 2);
 
@@ -113,24 +233,26 @@ pub async fn contiguous_neighbors_of_tile_with_clicks() {
     assert!(nb == 3, "In that scenario, we should have 3 contiguous tiles (got {nb}) in a radius of 2 from (0,0) owned by first user");
 
     assert!(
-        check_as_coords_in_vec(&tiles, &AxialCoords::new(0, -1)),
+        are_coords_in_vec(&tiles, &AxialCoords::new(0, -1)).is_some(),
         "Contiguous neighbors vector should contain (0,-1)"
     );
 
     assert!(
-        check_as_coords_in_vec(&tiles, &AxialCoords::new(0, -2)),
+        are_coords_in_vec(&tiles, &AxialCoords::new(0, -2)).is_some(),
         "Contiguous neighbors vector should contain (0,-2)"
     );
 
     assert!(
-        !check_as_coords_in_vec(&tiles, &AxialCoords::new(0, -3)),
+        are_coords_in_vec(&tiles, &AxialCoords::new(0, -3)).is_none(),
         "Contiguous neighbors vector should NOT contain (0,-3) because it's outside asked radius"
     );
 
     assert!(
-        !check_as_coords_in_vec(&tiles, &AxialCoords::new(0, 1)),
+        are_coords_in_vec(&tiles, &AxialCoords::new(0, 1)).is_none(),
         "Contiguous neighbors vector should NOT contain (0,1) because it's owned by an other user"
-    )
+    );
+
+    let _ = mock_redis.flushdb().await.unwrap();
 }
 
 #[tokio::test]
@@ -458,4 +580,6 @@ pub async fn game_behavior_taking_ownership() {
         computed_tile_to_check.strength == 5 && computed_tile_to_check.user_id == "first_user_id",
         "(0,0) should be unaffected by previous click on (-2,0) and have a strength of 5"
     );
+
+    let _ = mock_redis.flushdb().await.unwrap();
 }

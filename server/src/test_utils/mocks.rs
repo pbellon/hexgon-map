@@ -19,7 +19,15 @@ impl MockRedisHandler {
 
 #[async_trait::async_trait]
 impl RedisHandler for MockRedisHandler {
-    async fn count_tiles_by_user(&self, user_id: &str) -> Result<usize, redis::RedisError> {
+    async fn flushdb(&self) -> redis::RedisResult<()> {
+        let mut write = self.mock_data.write().await;
+
+        write.clear();
+
+        Ok(())
+    }
+
+    async fn count_tiles_by_user(&self, user_id: &str) -> redis::RedisResult<usize> {
         let read = self.mock_data.read().await;
 
         let mut count = 0;
@@ -36,7 +44,7 @@ impl RedisHandler for MockRedisHandler {
     async fn batch_get_tiles(
         &self,
         coords: Vec<AxialCoords>,
-    ) -> Result<Vec<(AxialCoords, InnerTileData)>, redis::RedisError> {
+    ) -> redis::RedisResult<Vec<(AxialCoords, InnerTileData)>> {
         let read = self.mock_data.read().await;
         let mut results = Vec::new();
         for c in coords.iter() {
@@ -53,19 +61,12 @@ impl RedisHandler for MockRedisHandler {
         Ok(results)
     }
 
-    async fn get_tile(
-        &self,
-        coords: &AxialCoords,
-    ) -> Result<Option<InnerTileData>, redis::RedisError> {
+    async fn get_tile(&self, coords: &AxialCoords) -> redis::RedisResult<Option<InnerTileData>> {
         let read = self.mock_data.read().await;
         Ok(read.get(&coords).cloned())
     }
 
-    async fn set_tile(
-        &self,
-        coords: &AxialCoords,
-        tile: InnerTileData,
-    ) -> Result<(), redis::RedisError> {
+    async fn set_tile(&self, coords: &AxialCoords, tile: InnerTileData) -> redis::RedisResult<()> {
         let mut write = self.mock_data.write().await;
         write.insert(coords.clone(), tile);
         Ok(())

@@ -198,7 +198,7 @@ impl GameData {
         redis_client: &dyn RedisHandler,
         coords: &AxialCoords,
     ) -> redis::RedisResult<HashMap<AxialCoords, InnerTileData>> {
-        let coords = cube_spiral(&coords.as_cube(), 2)
+        let coords_to_fetch = cube_spiral(&coords.as_cube(), 2)
             .iter()
             .filter_map(|c| {
                 if is_within_grid(c.as_axial(), self.settings.radius) {
@@ -208,8 +208,7 @@ impl GameData {
             })
             .collect();
 
-        let res = redis_client.batch_get_tiles(coords).await.unwrap();
-
+        let res = redis_client.batch_get_tiles(coords_to_fetch).await.unwrap();
         let hash: HashMap<AxialCoords, InnerTileData> = res.into_iter().collect();
 
         Ok(hash)
@@ -260,8 +259,6 @@ impl GameData {
         if let Some(current_tile) = redis_client.get_tile(click_coords).await.expect(&format!(
             "Redis error occured why retrieving tile at {click_coords:?}",
         )) {
-            log::info!("Found tile at {click_coords:?} => {current_tile:?}");
-
             let mut updated_tile = current_tile.clone();
 
             let prefetch = self.fetch_within(redis_client, click_coords).await.unwrap();
@@ -280,8 +277,6 @@ impl GameData {
                 // raise damage only if on a tile owned by another user,
                 // do that to avoid issue with remaining_strength calculus below
                 let remaining_strength: i8;
-
-                log::info!("Tile clicked not owned by current user");
 
                 // when clicking on a tile owned by someone => raise damage
                 damage += 1;
@@ -311,8 +306,6 @@ impl GameData {
                         2,
                     );
                     updated_tiles.append(&mut tiles.clone());
-
-                    // log::info!("request user's neighbors tiles to update: {req_user_tiles:?}");
 
                     // 2 => append new owner's tiles to `update_tiles` vec, will compute final strength at the end
                     let (tiles, _) = self.contiguous_neighbors_of_tile(

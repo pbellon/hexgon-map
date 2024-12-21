@@ -22,6 +22,10 @@ RUN cargo build --release
 # Start a new stage to create a smaller image without unnecessary build dependencies
 FROM debian:bookworm-slim
 
+RUN apt-get update && apt-get install -y rsyslog
+
+CMD ["rsyslogd", "-n"]
+
 # Set the working directory
 WORKDIR /usr/src/app
 

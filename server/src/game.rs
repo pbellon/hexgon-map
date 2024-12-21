@@ -79,9 +79,17 @@ impl GameData {
                 .await
             {
                 Ok(tiles) => {
+                    let mut temp_fetched_map: HashMap<AxialCoords, InnerTileData> = HashMap::new();
+
                     for (coords, tile) in tiles {
                         match self
-                            .computed_tile(redis_client, &coords, &tile, con.clone())
+                            .computed_tile(
+                                redis_client,
+                                &coords,
+                                &tile,
+                                &mut temp_fetched_map,
+                                con.clone(),
+                            )
                             .await
                         {
                             Ok(c) => {
@@ -188,13 +196,16 @@ impl GameData {
         &self,
         redis_client: &dyn RedisHandler,
         coords: &AxialCoords,
+        previously_fetched: &mut HashMap<AxialCoords, InnerTileData>,
         reuse_con: Option<MultiplexedConnection>,
-    ) -> redis::RedisResult<HashMap<AxialCoords, InnerTileData>> {
+    ) -> redis::RedisResult<()> {
         let coords_to_fetch = cube_spiral(&coords.as_cube(), 2)
             .iter()
             .filter_map(|c| {
-                if is_within_grid(c.as_axial(), self.settings.radius) {
-                    return Some(c.as_axial());
+                let ac = c.as_axial();
+                if is_within_grid(ac, self.settings.radius) && !previously_fetched.contains_key(&ac)
+                {
+                    return Some(ac);
                 }
                 return None;
             })
@@ -204,9 +215,12 @@ impl GameData {
             .batch_get_tiles(coords_to_fetch, reuse_con)
             .await
             .unwrap();
-        let hash: HashMap<AxialCoords, InnerTileData> = res.into_iter().collect();
 
-        Ok(hash)
+        for (coord, data) in res.iter() {
+            previously_fetched.insert(*coord, data.clone());
+        }
+
+        Ok(())
     }
 
     pub async fn computed_tile(
@@ -214,15 +228,15 @@ impl GameData {
         redis_client: &dyn RedisHandler,
         coords: &AxialCoords,
         tile: &InnerTileData,
+        prefetched: &mut HashMap<AxialCoords, InnerTileData>,
         reuse_con: Option<MultiplexedConnection>,
     ) -> Result<TileData, redis::RedisError> {
-        let prefetch = self
-            .fetch_within(redis_client, coords, reuse_con)
+        self.fetch_within(redis_client, coords, prefetched, reuse_con)
             .await
             .unwrap();
 
         let (_, nb_neighboors) =
-            self.contiguous_neighbors_of_tile(&prefetch, coords, &tile.user_id, 2);
+            self.contiguous_neighbors_of_tile(prefetched, coords, &tile.user_id, 2);
 
         let strength = 1 + nb_neighboors - tile.damage;
 
@@ -269,10 +283,15 @@ impl GameData {
         {
             let mut updated_tile = current_tile.clone();
 
-            let prefetch = self
-                .fetch_within(redis_client, click_coords, redis_conn_to_reuse.clone())
-                .await
-                .unwrap();
+            let mut prefetch = HashMap::new();
+            self.fetch_within(
+                redis_client,
+                click_coords,
+                &mut prefetch,
+                redis_conn_to_reuse.clone(),
+            )
+            .await
+            .unwrap();
 
             let (_, nb_neighboors) = self.contiguous_neighbors_of_tile(
                 &prefetch,
@@ -310,11 +329,16 @@ impl GameData {
                             "Could not update tile at {click_coords:?} with new user id"
                         ));
 
+                    let mut prefetch = HashMap::new();
                     // fetch once all neighboors
-                    let prefetch = self
-                        .fetch_within(redis_client, click_coords, redis_conn_to_reuse.clone())
-                        .await
-                        .unwrap();
+                    self.fetch_within(
+                        redis_client,
+                        click_coords,
+                        &mut prefetch,
+                        redis_conn_to_reuse.clone(),
+                    )
+                    .await
+                    .unwrap();
 
                     // 1. append former owner tiles to `update_tiles`
                     let (tiles, _) = self.contiguous_neighbors_of_tile(
@@ -385,11 +409,17 @@ impl GameData {
                 .await
             {
                 Ok(_) => {
+                    let mut prefetch = HashMap::new();
                     updated_tiles.push((click_coords.clone(), new_tile.clone()));
-                    let prefetch = self
-                        .fetch_within(redis_client, &click_coords, redis_conn_to_reuse.clone())
-                        .await
-                        .unwrap();
+
+                    self.fetch_within(
+                        redis_client,
+                        &click_coords,
+                        &mut prefetch,
+                        redis_conn_to_reuse.clone(),
+                    )
+                    .await
+                    .unwrap();
                     // append its neighboors to have new strength
                     let (tiles, _) = self.contiguous_neighbors_of_tile(
                         &prefetch,
@@ -410,10 +440,17 @@ impl GameData {
         }
 
         let mut res = Vec::new();
+        let mut prefetch = HashMap::new();
 
         for (coords, tile) in updated_tiles {
             let computed = self
-                .computed_tile(redis_client, &coords, &tile, redis_conn_to_reuse.clone())
+                .computed_tile(
+                    redis_client,
+                    &coords,
+                    &tile,
+                    &mut prefetch,
+                    redis_conn_to_reuse.clone(),
+                )
                 .await
                 .unwrap();
 

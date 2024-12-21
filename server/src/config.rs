@@ -8,6 +8,7 @@ pub struct GameConfig {
     pub front_end_url: String,
     pub use_benchmark_data: bool,
     pub redis_url: String,
+    pub with_redis_tests: bool,
 }
 
 impl GameConfig {
@@ -38,6 +39,13 @@ impl GameConfig {
             Err(_) => false,
         };
 
+        let with_redis_tests: bool = match env::var("WITH_REDIS_TESTS") {
+            Ok(value) => value
+                .parse()
+                .expect("Failed to parse WITH_REDIS_TESTS. Expected a boolean"),
+            Err(_) => false,
+        };
+
         let redis_url = match env::var("REDIS_URL") {
             Ok(value) => value,
             Err(_) => "redis://127.0.0.1:6379".to_string(),
@@ -47,8 +55,9 @@ impl GameConfig {
             front_end_url,
             grid_batch_div,
             grid_radius,
-            use_benchmark_data,
             redis_url,
+            use_benchmark_data,
+            with_redis_tests,
         }
     }
 }

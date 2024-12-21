@@ -47,7 +47,7 @@ pub trait RedisHandler {
         data: InnerTileData,
     ) -> Result<(), redis::RedisError>;
 
-    async fn get_all_tiles(
+    async fn batch_get_tiles(
         &self,
         coords: Vec<AxialCoords>,
     ) -> Result<Vec<(AxialCoords, InnerTileData)>, redis::RedisError>;
@@ -120,7 +120,7 @@ fn parse_hashmap(
 
 #[async_trait::async_trait]
 impl RedisHandler for redis::Client {
-    async fn get_all_tiles(
+    async fn batch_get_tiles(
         &self,
         coords: Vec<AxialCoords>,
     ) -> Result<Vec<(AxialCoords, InnerTileData)>, redis::RedisError> {
@@ -213,6 +213,15 @@ pub async fn init_redis_client(
         .await
         .expect("Failed to create multiplexed async connection");
 
+    let _ = redis::cmd("FT.DROPINDEX idx:tile")
+        .arg("DD")
+        .query_async(&mut con)
+        .await
+        .or_else(|e| {
+            log::error!("Could not drop index: {e}");
+            Ok::<(), redis::RedisError>(())
+        });
+
     // create indices
     let _ = redis::cmd("FT.CREATE")
         .arg("idx:tile")
@@ -228,7 +237,10 @@ pub async fn init_redis_client(
         .arg("NUMERIC")
         .query_async::<MultiplexedConnection, ()>(&mut con)
         .await
-        .expect("Failed to create indice");
+        .or_else(|e| {
+            log::error!("Failed to create indice: {e}");
+            Ok::<(), redis::RedisError>(())
+        });
 
     Ok(client)
 }

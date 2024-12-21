@@ -1,18 +1,33 @@
+use std::sync::Arc;
+
 use pixelstratwar::{
+    config::GameConfig,
     coords::AxialCoords,
     game::{GameData, InnerTileData},
+    store::{init_redis_client, RedisHandler},
     test_utils::mocks::MockRedisHandler,
 };
 
+async fn redis_client_or_mock() -> Arc<dyn RedisHandler> {
+    let app_config = GameConfig::read_config_from_env();
+    if app_config.with_redis_tests {
+        return Arc::new(init_redis_client(&app_config).await.unwrap());
+    }
+
+    return Arc::new(MockRedisHandler::new());
+}
+
 #[tokio::test]
 pub async fn contiguous_neighbors_of_tile_empty() {
-    let mock_redis = MockRedisHandler::new();
+    let mock_redis = redis_client_or_mock().await;
 
     let game_data = GameData::new(10, 2);
-    let (tiles, nb) = game_data
-        .contiguous_neighbors_of_tile(&mock_redis, &AxialCoords::new(0, 0), "toto", 2)
+    let coords = AxialCoords::new(0, 0);
+    let prefetch = game_data
+        .fetch_within(mock_redis.as_ref(), &coords)
         .await
         .unwrap();
+    let (tiles, nb) = game_data.contiguous_neighbors_of_tile(&prefetch, &coords, "toto", 2);
 
     assert!(
         tiles.len() == 0 && nb == 0,
@@ -33,42 +48,65 @@ fn check_as_coords_in_vec(
 #[tokio::test]
 pub async fn contiguous_neighbors_of_tile_with_clicks() {
     let game_data = GameData::new(10, 2);
-    let mock_redis = MockRedisHandler::new();
+    let mock_redis = redis_client_or_mock().await;
 
     game_data
-        .handle_click(&mock_redis, &AxialCoords::center(), "first_user_id")
-        .await
-        .unwrap();
-
-    game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, -1), "first_user_id")
+        .handle_click(mock_redis.as_ref(), &AxialCoords::center(), "first_user_id")
         .await
         .unwrap();
 
     game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, -2), "first_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, -1),
+            "first_user_id",
+        )
         .await
         .unwrap();
 
     game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, -3), "first_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, -2),
+            "first_user_id",
+        )
         .await
         .unwrap();
 
     game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, 1), "second_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, -3),
+            "first_user_id",
+        )
         .await
         .unwrap();
 
     game_data
-        .handle_click(&mock_redis, &AxialCoords::new(1, 0), "first_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, 1),
+            "second_user_id",
+        )
         .await
         .unwrap();
 
-    let (tiles, nb) = game_data
-        .contiguous_neighbors_of_tile(&mock_redis, &AxialCoords::center(), "first_user_id", 2)
+    game_data
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(1, 0),
+            "first_user_id",
+        )
         .await
         .unwrap();
+
+    let coords = AxialCoords::center();
+    let prefetch = game_data
+        .fetch_within(mock_redis.as_ref(), &coords)
+        .await
+        .unwrap();
+    let (tiles, nb) =
+        game_data.contiguous_neighbors_of_tile(&prefetch, &coords, "first_user_id", 2);
 
     // check proper tiles in vec
 
@@ -111,46 +149,70 @@ pub async fn contiguous_neighbors_of_tile_with_clicks() {
 pub async fn game_behavior_taking_ownership() {
     // init game data with basic ownership
     let game_data = GameData::new(10, 2);
-    let mock_redis = MockRedisHandler::new();
+    let mock_redis = redis_client_or_mock().await;
 
     game_data
-        .handle_click(&mock_redis, &AxialCoords::center(), "first_user_id")
+        .handle_click(mock_redis.as_ref(), &AxialCoords::center(), "first_user_id")
         .await
         .unwrap();
 
     game_data
-        .handle_click(&mock_redis, &AxialCoords::new(1, 0), "first_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(1, 0),
+            "first_user_id",
+        )
         .await
         .unwrap();
     game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, -1), "first_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, -1),
+            "first_user_id",
+        )
         .await
         .unwrap();
     game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, -2), "first_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, -2),
+            "first_user_id",
+        )
         .await
         .unwrap();
     game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, -3), "first_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, -3),
+            "first_user_id",
+        )
         .await
         .unwrap();
 
     // tile with a single neighbor owned by another user, should require 2 clicks to take owner ship
     game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, 1), "second_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, 1),
+            "second_user_id",
+        )
         .await
         .unwrap();
 
     game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, 2), "second_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, 2),
+            "second_user_id",
+        )
         .await
         .unwrap();
 
     // check state is OK after all clicks
 
     // check (0,0)
-    let mut tile_to_check = game_data
-        .get_tile(&mock_redis, &AxialCoords::center())
+    let mut tile_to_check = mock_redis
+        .get_tile(&AxialCoords::center())
         .await
         .unwrap()
         .expect("Should have tile a (0,0)");
@@ -162,9 +224,9 @@ pub async fn game_behavior_taking_ownership() {
 
     // check computed tile of (0,0)
     let mut computed_tile_to_check = game_data
-        .computed_tile(&mock_redis, &AxialCoords::center(), &tile_to_check)
+        .computed_tile(mock_redis.as_ref(), &AxialCoords::center(), &tile_to_check)
         .await
-        .unwrap();
+        .expect("Failed to compute tile to check");
 
     assert!(
         computed_tile_to_check.strength == 4
@@ -173,8 +235,8 @@ pub async fn game_behavior_taking_ownership() {
     );
 
     // check (1,0)
-    tile_to_check = game_data
-        .get_tile(&mock_redis, &AxialCoords::new(1, 0))
+    tile_to_check = mock_redis
+        .get_tile(&AxialCoords::new(1, 0))
         .await
         .unwrap()
         .expect("Should find tile at (1,0)");
@@ -185,8 +247,8 @@ pub async fn game_behavior_taking_ownership() {
     );
 
     // check (0,-1)
-    tile_to_check = game_data
-        .get_tile(&mock_redis, &AxialCoords::new(0, -1))
+    tile_to_check = mock_redis
+        .get_tile(&AxialCoords::new(0, -1))
         .await
         .unwrap()
         .expect("Should find tile at (0, -1)");
@@ -196,8 +258,8 @@ pub async fn game_behavior_taking_ownership() {
         "(0,-1) should be owned by first user and have no damage"
     );
     // check (0,-2)
-    tile_to_check = game_data
-        .get_tile(&mock_redis, &AxialCoords::new(0, -2))
+    tile_to_check = mock_redis
+        .get_tile(&AxialCoords::new(0, -2))
         .await
         .unwrap()
         .expect("Should find tile at (0,-2)");
@@ -207,8 +269,8 @@ pub async fn game_behavior_taking_ownership() {
         "(0,-2) should be owned by first user and have no damage"
     );
     // check (0,-3)
-    tile_to_check = game_data
-        .get_tile(&mock_redis, &AxialCoords::new(0, -3))
+    tile_to_check = mock_redis
+        .get_tile(&AxialCoords::new(0, -3))
         .await
         .unwrap()
         .expect("Should find tile at (0,-3)");
@@ -217,8 +279,8 @@ pub async fn game_behavior_taking_ownership() {
         "(0,-3) should be owned by first user and have no damage"
     );
     // check (0,1)
-    tile_to_check = game_data
-        .get_tile(&mock_redis, &AxialCoords::new(0, 1))
+    tile_to_check = mock_redis
+        .get_tile(&AxialCoords::new(0, 1))
         .await
         .unwrap()
         .expect("Should find tile at (0,1)");
@@ -227,8 +289,8 @@ pub async fn game_behavior_taking_ownership() {
         "(0,1) should be owned by second user and have no damage"
     );
     // check (0,2)
-    tile_to_check = game_data
-        .get_tile(&mock_redis, &AxialCoords::new(0, 2))
+    tile_to_check = mock_redis
+        .get_tile(&AxialCoords::new(0, 2))
         .await
         .unwrap()
         .expect("should find tile at (0,2)");
@@ -239,7 +301,7 @@ pub async fn game_behavior_taking_ownership() {
 
     // check computed tile of (0,2)
     computed_tile_to_check = game_data
-        .computed_tile(&mock_redis, &AxialCoords::new(0, 2), &tile_to_check)
+        .computed_tile(mock_redis.as_ref(), &AxialCoords::new(0, 2), &tile_to_check)
         .await
         .unwrap();
 
@@ -251,12 +313,16 @@ pub async fn game_behavior_taking_ownership() {
 
     // click on another user tile having a neighbor but only once => no ownership taken
     let updated_tiles = game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, 1), "first_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, 1),
+            "first_user_id",
+        )
         .await
         .expect("Should update tile properly");
 
-    tile_to_check = game_data
-        .get_tile(&mock_redis, &AxialCoords::new(0, 1))
+    tile_to_check = mock_redis
+        .get_tile(&AxialCoords::new(0, 1))
         .await
         .unwrap()
         .expect("Should find tile at (0,1)");
@@ -276,7 +342,7 @@ pub async fn game_behavior_taking_ownership() {
 
     // check computed tile of (0,1) to see if damage affects overall strength
     computed_tile_to_check = game_data
-        .computed_tile(&mock_redis, &AxialCoords::new(0, 1), &tile_to_check)
+        .computed_tile(mock_redis.as_ref(), &AxialCoords::new(0, 1), &tile_to_check)
         .await
         .unwrap();
     assert!(
@@ -287,12 +353,16 @@ pub async fn game_behavior_taking_ownership() {
 
     // click again and check we took ownership
     let updated_tiles = game_data
-        .handle_click(&mock_redis, &AxialCoords::new(0, 1), "first_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(0, 1),
+            "first_user_id",
+        )
         .await
         .expect("Should update tile properly");
 
-    tile_to_check = game_data
-        .get_tile(&mock_redis, &AxialCoords::new(0, 1))
+    tile_to_check = mock_redis
+        .get_tile(&AxialCoords::new(0, 1))
         .await
         .unwrap()
         .expect("Should find tile at (0,1)");
@@ -340,7 +410,11 @@ pub async fn game_behavior_taking_ownership() {
     // test contiguous behavior properly works by clicking on a tile within center point's radius
     // but not contiguous to first user tiles
     let updated_tiles = game_data
-        .handle_click(&mock_redis, &AxialCoords::new(-2, 0), "first_user_id")
+        .handle_click(
+            mock_redis.as_ref(),
+            &AxialCoords::new(-2, 0),
+            "first_user_id",
+        )
         .await
         .expect("Should be able to update tiles");
 
@@ -369,10 +443,10 @@ pub async fn game_behavior_taking_ownership() {
     // check (0,0) unaffacted by previous click
     let computed_tile_to_check = game_data
         .computed_tile(
-            &mock_redis,
+            mock_redis.as_ref(),
             &AxialCoords::center(),
-            &game_data
-                .get_tile(&mock_redis, &AxialCoords::center())
+            &mock_redis
+                .get_tile(&AxialCoords::center())
                 .await
                 .unwrap()
                 .expect("Should find tile at (0,0)"),

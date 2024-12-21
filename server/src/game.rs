@@ -10,7 +10,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     config::GameConfig,
-    coords::{self, AxialCoords, PrecomputedNeighbors},
+    coords::{self, cube_spiral, is_within_grid, AxialCoords, PrecomputedNeighbors},
     store::RedisHandler,
     user::{GameUsers, PublicUser},
     utils::create_benchmark_game_data,
@@ -70,7 +70,7 @@ impl GameData {
         if let Some(batch_coords) = self.precomputed_batches.get(batch) {
             let mut results = Vec::new();
 
-            match redis_client.get_all_tiles(batch_coords.clone()).await {
+            match redis_client.batch_get_tiles(batch_coords.clone()).await {
                 Ok(tiles) => {
                     for (coords, tile) in tiles {
                         match self.computed_tile(redis_client, &coords, &tile).await {
@@ -139,13 +139,13 @@ impl GameData {
 
     /// Returns all tiles that are contiguous to the given `coords`, i.e., all "connected" tiles next to `coords`
     /// that are owned by the specified `user_id`.
-    pub async fn contiguous_neighbors_of_tile<R: RedisHandler>(
+    pub fn contiguous_neighbors_of_tile(
         &self,
-        redis_client: &R,
+        prefetched: &HashMap<AxialCoords, InnerTileData>,
         tile_coords: &AxialCoords,
         user_id: &str,
         radius: u8,
-    ) -> Result<(Vec<(AxialCoords, InnerTileData)>, u8), redis::RedisError> {
+    ) -> (Vec<(AxialCoords, InnerTileData)>, u8) {
         let mut count = 0;
         let mut processed_set: HashSet<AxialCoords> = HashSet::new();
         let mut results = Vec::new();
@@ -156,9 +156,7 @@ impl GameData {
 
             for coords_to_check in to_check.drain(..) {
                 if let Some(ring) = self.precomputed_neighbors.get(&coords_to_check) {
-                    let mut filtered_neighbors = Vec::new();
-
-                    let mut coords: Vec<AxialCoords> = ring
+                    let filtered_neighbors: Vec<(AxialCoords, InnerTileData)> = ring
                         .iter()
                         .filter_map(|rc| {
                             rc.and_then(|drc| {
@@ -166,32 +164,16 @@ impl GameData {
                                     return None;
                                 }
 
-                                return Some(drc);
+                                if let Some(nb) = prefetched.get(&drc) {
+                                    if nb.user_id == user_id {
+                                        return Some((drc.clone(), nb.clone()));
+                                    }
+                                }
+
+                                return None;
                             })
                         })
                         .collect();
-
-                    // fetch all tiles at once
-                    match redis_client.get_all_tiles(coords).await {
-                        Ok(tiles) => {
-                            filtered_neighbors.append(
-                                &mut tiles
-                                    .iter()
-                                    .filter_map(|(c, t)| {
-                                        if t.user_id == user_id {
-                                            return Some((c.clone(), t.clone()));
-                                        }
-
-                                        return None;
-                                    })
-                                    .collect(),
-                            );
-                        }
-                        Err(e) => {
-                            log::error!("An error occured fetching neighboors: {e}");
-                            return Err(e);
-                        }
-                    };
 
                     // Add valid neighbors to results and mark them as processed
                     for (neighbor, tile_data) in filtered_neighbors {
@@ -206,24 +188,43 @@ impl GameData {
             to_check = next_to_check;
         }
 
-        Ok((results, count))
+        (results, count)
     }
 
-    pub async fn computed_tile<R: RedisHandler>(
+    /// helper fn to prefetch the HashMap<AxialCoords, InnerTileData>
+    /// that will be used by `contiguous_neighbors_of_tile`
+    pub async fn fetch_within(
         &self,
-        redis_client: &R,
+        redis_client: &dyn RedisHandler,
+        coords: &AxialCoords,
+    ) -> redis::RedisResult<HashMap<AxialCoords, InnerTileData>> {
+        let coords = cube_spiral(&coords.as_cube(), 2)
+            .iter()
+            .filter_map(|c| {
+                if is_within_grid(c.as_axial(), self.settings.radius) {
+                    return Some(c.as_axial());
+                }
+                return None;
+            })
+            .collect();
+
+        let res = redis_client.batch_get_tiles(coords).await.unwrap();
+
+        let hash: HashMap<AxialCoords, InnerTileData> = res.into_iter().collect();
+
+        Ok(hash)
+    }
+
+    pub async fn computed_tile(
+        &self,
+        redis_client: &dyn RedisHandler,
         coords: &AxialCoords,
         tile: &InnerTileData,
     ) -> Result<TileData, redis::RedisError> {
-        let nb_neighboors = match self
-            .contiguous_neighbors_of_tile(redis_client, coords, &tile.user_id, 2)
-            .await
-        {
-            Ok(vec) => vec.1,
-            Err(e) => {
-                return Err(e);
-            }
-        };
+        let prefetch = self.fetch_within(redis_client, coords).await.unwrap();
+
+        let (_, nb_neighboors) =
+            self.contiguous_neighbors_of_tile(&prefetch, coords, &tile.user_id, 2);
 
         let strength = 1 + nb_neighboors - tile.damage;
 
@@ -247,39 +248,30 @@ impl GameData {
         }
     }
 
-    pub async fn get_tile<R: RedisHandler>(
+    pub async fn handle_click(
         &self,
-        redis_client: &R,
-        coords: &AxialCoords,
-    ) -> Result<Option<InnerTileData>, redis::RedisError> {
-        redis_client.get_tile(coords).await
-    }
-
-    pub async fn handle_click<R: RedisHandler>(
-        &self,
-        redis_client: &R,
-        coords: &AxialCoords,
+        redis_client: &dyn RedisHandler,
+        click_coords: &AxialCoords,
         click_user_id: &str,
     ) -> Result<Vec<(AxialCoords, TileData)>, redis::RedisError> {
         let mut updated_tiles: Vec<(AxialCoords, InnerTileData)> = Vec::new();
 
         // If the tile exists (aka is owned by someone)
-        if let Some(current_tile) = redis_client.get_tile(coords).await.expect(&format!(
-            "Redis error occured why retrieving tile at {coords:?}",
+        if let Some(current_tile) = redis_client.get_tile(click_coords).await.expect(&format!(
+            "Redis error occured why retrieving tile at {click_coords:?}",
         )) {
-            log::info!("Found tile at {coords:?} => {current_tile:?}");
+            log::info!("Found tile at {click_coords:?} => {current_tile:?}");
 
             let mut updated_tile = current_tile.clone();
 
-            let nb_neighboors = match self
-                .contiguous_neighbors_of_tile(redis_client, coords, &current_tile.user_id, 2)
-                .await
-            {
-                Ok(vec) => vec.1 as i8,
-                Err(e) => {
-                    return Err(e);
-                }
-            };
+            let prefetch = self.fetch_within(redis_client, click_coords).await.unwrap();
+
+            let (_, nb_neighboors) = self.contiguous_neighbors_of_tile(
+                &prefetch,
+                click_coords,
+                &current_tile.user_id,
+                2,
+            );
 
             let mut damage = current_tile.damage as i8;
 
@@ -293,7 +285,7 @@ impl GameData {
 
                 // when clicking on a tile owned by someone => raise damage
                 damage += 1;
-                remaining_strength = max(0, 1 + nb_neighboors - damage);
+                remaining_strength = max(0, 1 + nb_neighboors as i8 - damage);
 
                 // Handle the tile change in ownership
                 if remaining_strength == 0 {
@@ -302,47 +294,43 @@ impl GameData {
 
                     // 0 => Directly insert tile with new user_id to ease strength computing below
                     redis_client
-                        .set_tile(coords, updated_tile.clone())
+                        .set_tile(click_coords, updated_tile.clone())
                         .await
                         .expect(&format!(
-                            "Could not update tile at {coords:?} with new user id"
+                            "Could not update tile at {click_coords:?} with new user id"
                         ));
 
-                    match self
-                        .contiguous_neighbors_of_tile(
-                            redis_client,
-                            &coords,
-                            &current_tile.user_id,
-                            2,
-                        )
-                        .await
-                    {
-                        Ok((tiles, _)) => {
-                            updated_tiles.append(&mut tiles.clone());
-                        }
-                        Err(e) => {
-                            return Err(e);
-                        }
-                    }
+                    // fetch once all neighboors
+                    let prefetch = self.fetch_within(redis_client, click_coords).await.unwrap();
+
+                    // 1. append former owner tiles to `update_tiles`
+                    let (tiles, _) = self.contiguous_neighbors_of_tile(
+                        &prefetch,
+                        &click_coords,
+                        &current_tile.user_id,
+                        2,
+                    );
+                    updated_tiles.append(&mut tiles.clone());
 
                     // log::info!("request user's neighbors tiles to update: {req_user_tiles:?}");
 
                     // 2 => append new owner's tiles to `update_tiles` vec, will compute final strength at the end
-                    let (tiles, _) = self
-                        .contiguous_neighbors_of_tile(redis_client, &coords, click_user_id, 2)
-                        .await
-                        .unwrap();
-
+                    let (tiles, _) = self.contiguous_neighbors_of_tile(
+                        &prefetch,
+                        &click_coords,
+                        click_user_id,
+                        2,
+                    );
                     updated_tiles.append(&mut tiles.clone());
                 } else {
                     // Update current tile without changing ownership, not yet "destroyed"
                     // but with augmented damage
                     updated_tile.damage += 1;
                     redis_client
-                        .set_tile(coords, updated_tile.clone())
+                        .set_tile(click_coords, updated_tile.clone())
                         .await
                         .expect(&format!(
-                            "Could not update tile at {coords:?} to raise damage"
+                            "Could not update tile at {click_coords:?} to raise damage"
                         ));
                 }
             } else {
@@ -352,10 +340,10 @@ impl GameData {
                 if current_tile.damage > 0 {
                     updated_tile.damage -= 1;
                     redis_client
-                        .set_tile(coords, updated_tile.clone())
+                        .set_tile(click_coords, updated_tile.clone())
                         .await
                         .expect(&format!(
-                            "Could not update tile at {coords:?} to decrease damage"
+                            "Could not update tile at {click_coords:?} to decrease damage"
                         ));
                 }
             }
@@ -364,7 +352,7 @@ impl GameData {
             if updated_tile.damage != current_tile.damage
                 || updated_tile.user_id != current_tile.user_id
             {
-                updated_tiles.push((*coords, updated_tile))
+                updated_tiles.push((*click_coords, updated_tile))
             }
         } else {
             // if not then we create the tile
@@ -373,19 +361,27 @@ impl GameData {
                 damage: 0,
             };
 
-            match redis_client.set_tile(coords, new_tile.clone()).await {
+            match redis_client.set_tile(click_coords, new_tile.clone()).await {
                 Ok(_) => {
-                    updated_tiles.push((coords.clone(), new_tile.clone()));
-                    // append its neighboors to have new strength
-                    let (tiles, _) = self
-                        .contiguous_neighbors_of_tile(redis_client, &coords, click_user_id, 2)
+                    updated_tiles.push((click_coords.clone(), new_tile.clone()));
+                    let prefetch = self
+                        .fetch_within(redis_client, &click_coords)
                         .await
-                        .expect(&format!("Could not get contiguous neighbors at {coords:?}"));
+                        .unwrap();
+                    // append its neighboors to have new strength
+                    let (tiles, _) = self.contiguous_neighbors_of_tile(
+                        &prefetch,
+                        &click_coords,
+                        click_user_id,
+                        2,
+                    );
 
                     updated_tiles.append(&mut tiles.clone());
                 }
                 Err(e) => {
-                    log::error!("A redis error occured while updating tile at {coords:?}: {e}");
+                    log::error!(
+                        "A redis error occured while updating tile at {click_coords:?}: {e}"
+                    );
                     return Err(e);
                 }
             }

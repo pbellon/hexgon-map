@@ -33,7 +33,7 @@ impl RedisHandler for MockRedisHandler {
         Ok(count)
     }
 
-    async fn get_all_tiles(
+    async fn batch_get_tiles(
         &self,
         coords: Vec<AxialCoords>,
     ) -> Result<Vec<(AxialCoords, InnerTileData)>, redis::RedisError> {

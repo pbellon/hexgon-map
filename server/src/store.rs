@@ -34,17 +34,29 @@ use crate::{config::GameConfig, coords::AxialCoords, game::InnerTileData};
 
 #[async_trait::async_trait]
 pub trait RedisHandler {
+    async fn open_connection(&self) -> redis::RedisResult<Option<MultiplexedConnection>>;
+
     async fn flushdb(&self) -> redis::RedisResult<()>;
 
     async fn count_tiles_by_user(&self, user_id: &str) -> redis::RedisResult<usize>;
 
-    async fn get_tile(&self, coords: &AxialCoords) -> redis::RedisResult<Option<InnerTileData>>;
+    async fn get_tile(
+        &self,
+        coords: &AxialCoords,
+        reuse_conn: Option<MultiplexedConnection>,
+    ) -> redis::RedisResult<Option<InnerTileData>>;
 
-    async fn set_tile(&self, coords: &AxialCoords, data: InnerTileData) -> redis::RedisResult<()>;
+    async fn set_tile(
+        &self,
+        coords: &AxialCoords,
+        data: InnerTileData,
+        reuse_conn: Option<MultiplexedConnection>,
+    ) -> redis::RedisResult<()>;
 
     async fn batch_get_tiles(
         &self,
         coords: Vec<AxialCoords>,
+        reuse_conn: Option<MultiplexedConnection>,
     ) -> redis::RedisResult<Vec<(AxialCoords, InnerTileData)>>;
 }
 
@@ -115,6 +127,15 @@ fn parse_hashmap(
 
 #[async_trait::async_trait]
 impl RedisHandler for redis::Client {
+    async fn open_connection(&self) -> redis::RedisResult<Option<MultiplexedConnection>> {
+        let con = self
+            .get_multiplexed_async_connection()
+            .await
+            .expect("Failed to create multiplexed async connection");
+
+        Ok(Some(con))
+    }
+
     async fn flushdb(&self) -> redis::RedisResult<()> {
         let mut con = self
             .get_multiplexed_async_connection()
@@ -131,11 +152,13 @@ impl RedisHandler for redis::Client {
     async fn batch_get_tiles(
         &self,
         coords: Vec<AxialCoords>,
+        reuse_con: Option<MultiplexedConnection>,
     ) -> Result<Vec<(AxialCoords, InnerTileData)>, redis::RedisError> {
-        let mut con = self
-            .get_connection_manager()
-            .await
-            .expect("Could not open connection");
+        let mut con = match reuse_con {
+            Some(v) => v,
+            None => self.get_multiplexed_async_connection().await.unwrap(),
+        };
+
         let mut pipe = redis::pipe();
 
         let mut keys = Vec::new();
@@ -179,11 +202,12 @@ impl RedisHandler for redis::Client {
     async fn get_tile(
         &self,
         coords: &AxialCoords,
+        reuse_con: Option<MultiplexedConnection>,
     ) -> Result<Option<InnerTileData>, redis::RedisError> {
-        let mut con = self
-            .get_connection_manager()
-            .await
-            .expect("Failed to open connection");
+        let mut con = match reuse_con {
+            Some(v) => v,
+            None => self.get_multiplexed_async_connection().await.unwrap(),
+        };
 
         let tile_k = get_tile_key(coords);
 
@@ -203,8 +227,13 @@ impl RedisHandler for redis::Client {
         &self,
         coords: &AxialCoords,
         tile: InnerTileData,
+        reuse_con: Option<MultiplexedConnection>,
     ) -> Result<(), redis::RedisError> {
-        let mut con = self.get_connection_manager().await.unwrap();
+        let mut con = match reuse_con {
+            Some(v) => v,
+            None => self.get_multiplexed_async_connection().await.unwrap(),
+        };
+
         let key = get_tile_key(coords);
 
         redis::pipe()

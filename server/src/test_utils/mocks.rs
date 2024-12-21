@@ -1,6 +1,7 @@
 use std::{collections::HashMap, sync::Arc};
 
 use async_trait;
+use redis::aio::MultiplexedConnection;
 
 use crate::{coords::AxialCoords, game::InnerTileData, store::RedisHandler};
 use tokio::sync::RwLock;
@@ -19,6 +20,10 @@ impl MockRedisHandler {
 
 #[async_trait::async_trait]
 impl RedisHandler for MockRedisHandler {
+    async fn open_connection(&self) -> redis::RedisResult<Option<MultiplexedConnection>> {
+        Ok(None)
+    }
+
     async fn flushdb(&self) -> redis::RedisResult<()> {
         let mut write = self.mock_data.write().await;
 
@@ -44,6 +49,7 @@ impl RedisHandler for MockRedisHandler {
     async fn batch_get_tiles(
         &self,
         coords: Vec<AxialCoords>,
+        _reuse_con: Option<MultiplexedConnection>,
     ) -> redis::RedisResult<Vec<(AxialCoords, InnerTileData)>> {
         let read = self.mock_data.read().await;
         let mut results = Vec::new();
@@ -61,12 +67,21 @@ impl RedisHandler for MockRedisHandler {
         Ok(results)
     }
 
-    async fn get_tile(&self, coords: &AxialCoords) -> redis::RedisResult<Option<InnerTileData>> {
+    async fn get_tile(
+        &self,
+        coords: &AxialCoords,
+        _reuse_con: Option<MultiplexedConnection>,
+    ) -> redis::RedisResult<Option<InnerTileData>> {
         let read = self.mock_data.read().await;
         Ok(read.get(&coords).cloned())
     }
 
-    async fn set_tile(&self, coords: &AxialCoords, tile: InnerTileData) -> redis::RedisResult<()> {
+    async fn set_tile(
+        &self,
+        coords: &AxialCoords,
+        tile: InnerTileData,
+        _reuse_con: Option<MultiplexedConnection>,
+    ) -> redis::RedisResult<()> {
         let mut write = self.mock_data.write().await;
         write.insert(coords.clone(), tile);
         Ok(())

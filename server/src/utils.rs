@@ -12,6 +12,10 @@ pub async fn create_benchmark_game_data<R: RedisHandler>(
     grid_rows_and_cols: u8,
 ) -> GameData {
     let data = GameData::new(radius, grid_rows_and_cols);
+    let con = redis_client
+        .open_connection()
+        .await
+        .expect("Could not open connection");
 
     for (coords, _) in data.precomputed_neighbors.clone() {
         redis_client
@@ -21,6 +25,7 @@ pub async fn create_benchmark_game_data<R: RedisHandler>(
                     user_id: benchmark_user.id.clone(),
                     damage: 0,
                 },
+                con.clone(),
             )
             .await
             .expect("Should be able to create tile");

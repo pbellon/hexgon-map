@@ -7,8 +7,10 @@ const HOST = __ENV.BASE_URL || "http://localhost:8080";
 
 export let options = {
   stages: [
-    { duration: "3m", target: 1000 }, // Ramp-up to 500 users
-    { duration: "1m", target: 700 }, // Hold at 500 users
+    { duration: "5m", target: 5000 }, // Ramp-up to 5k  users,
+    { duration: "1m", target: 7000 }, // Ramp-up to 7k users
+    { duration: "1m", target: 10000 }, // surge at 10k
+    { duration: "1m", target: 5000 }, // ramp-down to 5k users
     { duration: "1m", target: 0 }, // Ramp-down to 0 users
   ],
 };

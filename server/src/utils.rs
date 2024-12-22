@@ -5,27 +5,28 @@ use crate::store::RedisHandler;
 use crate::user::User;
 use crate::{game::GameData, game::InnerTileData};
 
-pub async fn create_benchmark_game_data<R: RedisHandler>(
+pub async fn create_benchmark_game_data<R, C>(
+    con: &mut C,
     redis_client: &R,
     benchmark_user: &User,
     radius: u32,
     grid_rows_and_cols: u8,
-) -> GameData {
+) -> GameData
+where
+    R: RedisHandler,
+    C: redis::aio::ConnectionLike + Send,
+{
     let data = GameData::new(radius, grid_rows_and_cols);
-    let con = redis_client
-        .open_connection()
-        .await
-        .expect("Could not open connection");
 
     for (coords, _) in data.precomputed_neighbors.clone() {
         redis_client
             .set_tile(
+                con,
                 &coords,
                 InnerTileData {
                     user_id: benchmark_user.id.clone(),
                     damage: 0,
                 },
-                con.clone(),
             )
             .await
             .expect("Should be able to create tile");

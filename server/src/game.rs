@@ -5,14 +5,13 @@ use std::{
 
 use rand::seq::SliceRandom; // you may need to adjust version depending on your Rust version
 
-use redis::aio::MultiplexedConnection;
 use serde::{Deserialize, Serialize};
 
 use crate::{
     config::GameConfig,
     coords::{self, cube_spiral, is_within_grid, AxialCoords, PrecomputedNeighbors},
     store::RedisHandler,
-    user::{GameUsers, PublicUser},
+    user::{PublicUser, User},
     utils::create_benchmark_game_data,
 };
 
@@ -61,21 +60,22 @@ impl GameData {
         list
     }
 
-    pub async fn compute_batch<R: RedisHandler>(
+    pub async fn compute_batch<R, C>(
         &self,
         redis_client: &R,
+        con: &mut C,
         batch: usize,
-    ) -> Result<Vec<(i32, i32, u8, String)>, String> {
+    ) -> Result<Vec<(i32, i32, u8, String)>, String>
+    where
+        C: redis::aio::ConnectionLike + Send,
+        R: RedisHandler,
+    {
         // Check if the batch exists
         if let Some(batch_coords) = self.precomputed_batches.get(batch) {
             let mut results = Vec::new();
-            let con = redis_client
-                .open_connection()
-                .await
-                .expect("Could not open connection");
 
             match redis_client
-                .batch_get_tiles(batch_coords.clone(), con.clone())
+                .batch_get_tiles(con, batch_coords.clone())
                 .await
             {
                 Ok(tiles) => {
@@ -83,13 +83,7 @@ impl GameData {
 
                     for (coords, tile) in tiles {
                         match self
-                            .computed_tile(
-                                redis_client,
-                                &coords,
-                                &tile,
-                                &mut temp_fetched_map,
-                                con.clone(),
-                            )
+                            .computed_tile(redis_client, con, &coords, &tile, &mut temp_fetched_map)
                             .await
                         {
                             Ok(c) => {
@@ -117,14 +111,18 @@ impl GameData {
         self.precomputed_neighbors.keys().cloned().collect()
     }
 
-    pub async fn init_from_config<R: RedisHandler>(
-        redis_client: &R,
-        config: &GameConfig,
-        users: &GameUsers,
-    ) -> Self {
+    pub async fn init_from_config<R, C>(con: &mut C, redis_client: &R, config: &GameConfig) -> Self
+    where
+        C: redis::aio::ConnectionLike + Send,
+        R: RedisHandler,
+    {
         if config.use_benchmark_data {
-            let user = users.register_user("benchmark-user").await;
+            let user = User::new("benchmark-user");
+
+            let _ = redis_client.add_user(con, user.clone()).await.unwrap();
+
             return create_benchmark_game_data(
+                con,
                 redis_client,
                 &user,
                 config.grid_radius,
@@ -192,13 +190,17 @@ impl GameData {
 
     /// helper fn to prefetch the HashMap<AxialCoords, InnerTileData>
     /// that will be used by `contiguous_neighbors_of_tile`
-    pub async fn fetch_within(
+    pub async fn fetch_within<'a, R, C>(
         &self,
-        redis_client: &dyn RedisHandler,
+        redis_client: &R,
+        con: &mut C,
         coords: &AxialCoords,
         previously_fetched: &mut HashMap<AxialCoords, InnerTileData>,
-        reuse_con: Option<MultiplexedConnection>,
-    ) -> redis::RedisResult<()> {
+    ) -> redis::RedisResult<bool>
+    where
+        R: RedisHandler,
+        C: redis::aio::ConnectionLike + Send + 'a,
+    {
         let coords_to_fetch = cube_spiral(&coords.as_cube(), 2)
             .iter()
             .filter_map(|c| {
@@ -211,27 +213,29 @@ impl GameData {
             })
             .collect();
 
-        let res = redis_client
-            .batch_get_tiles(coords_to_fetch, reuse_con)
-            .await
-            .unwrap();
+        let res = redis_client.batch_get_tiles(con, coords_to_fetch).await?;
 
         for (coord, data) in res.iter() {
             previously_fetched.insert(*coord, data.clone());
         }
 
-        Ok(())
+        Ok(true)
     }
 
-    pub async fn computed_tile(
+    pub async fn computed_tile<R, C>(
         &self,
-        redis_client: &dyn RedisHandler,
+        redis_client: &R,
+        con: &mut C,
         coords: &AxialCoords,
         tile: &InnerTileData,
         prefetched: &mut HashMap<AxialCoords, InnerTileData>,
-        reuse_con: Option<MultiplexedConnection>,
-    ) -> Result<TileData, redis::RedisError> {
-        self.fetch_within(redis_client, coords, prefetched, reuse_con)
+    ) -> redis::RedisResult<TileData>
+    where
+        R: RedisHandler,
+        C: redis::aio::ConnectionLike + Send,
+    {
+        let _ = self
+            .fetch_within(redis_client, con, coords, prefetched)
             .await
             .unwrap();
 
@@ -260,29 +264,24 @@ impl GameData {
         }
     }
 
-    pub async fn handle_click(
+    pub async fn handle_click<R, C>(
         &self,
-        redis_client: &dyn RedisHandler,
+        redis_client: &R,
+        con: &mut C,
         click_coords: &AxialCoords,
         click_user_id: &str,
-    ) -> Result<Vec<(AxialCoords, TileData)>, redis::RedisError> {
+    ) -> Result<Vec<(AxialCoords, TileData)>, redis::RedisError>
+    where
+        R: RedisHandler,
+        C: redis::aio::ConnectionLike + Send,
+    {
         let mut updated_tiles: Vec<(AxialCoords, InnerTileData)> = Vec::new();
-
-        let redis_conn_to_reuse = redis_client
-            .open_connection()
-            .await
-            .expect("Could not open connection");
 
         // helpful hashmap to recompute strength and avoir additionnal redis access
         let mut tmp_hash = HashMap::new();
 
         let _ = self
-            .fetch_within(
-                redis_client,
-                click_coords,
-                &mut tmp_hash,
-                redis_conn_to_reuse.clone(),
-            )
+            .fetch_within(redis_client, con, click_coords, &mut tmp_hash)
             .await;
 
         // If the tile exists (aka is owned by someone)
@@ -314,12 +313,8 @@ impl GameData {
                     tmp_hash.insert(click_coords.clone(), updated_tile.clone());
 
                     // 0 => insert tile with new user_id (effectively write the data in shared state)
-                    redis_client
-                        .set_tile(
-                            click_coords,
-                            updated_tile.clone(),
-                            redis_conn_to_reuse.clone(),
-                        )
+                    let _ = redis_client
+                        .set_tile(con, click_coords, updated_tile.clone())
                         .await
                         .expect(&format!(
                             "Could not update tile at {click_coords:?} with new user id"
@@ -352,12 +347,8 @@ impl GameData {
                     // but with augmented damage
                     updated_tile.damage += 1;
                     tmp_hash.insert(click_coords.clone(), updated_tile.clone());
-                    redis_client
-                        .set_tile(
-                            click_coords,
-                            updated_tile.clone(),
-                            redis_conn_to_reuse.clone(),
-                        )
+                    let _ = redis_client
+                        .set_tile(con, click_coords, updated_tile.clone())
                         .await
                         .expect(&format!(
                             "Could not update tile at {click_coords:?} to raise damage"
@@ -370,12 +361,8 @@ impl GameData {
                 if current_tile.damage > 0 {
                     updated_tile.damage -= 1;
                     tmp_hash.insert(click_coords.clone(), updated_tile.clone());
-                    redis_client
-                        .set_tile(
-                            click_coords,
-                            updated_tile.clone(),
-                            redis_conn_to_reuse.clone(),
-                        )
+                    let _ = redis_client
+                        .set_tile(con, click_coords, updated_tile.clone())
                         .await
                         .expect(&format!(
                             "Could not update tile at {click_coords:?} to decrease damage"
@@ -398,7 +385,7 @@ impl GameData {
             tmp_hash.insert(click_coords.clone(), new_tile.clone());
 
             match redis_client
-                .set_tile(click_coords, new_tile.clone(), redis_conn_to_reuse.clone())
+                .set_tile(con, click_coords, new_tile.clone())
                 .await
             {
                 Ok(_) => {
@@ -426,13 +413,7 @@ impl GameData {
         let mut res = Vec::new();
         for (coords, tile) in updated_tiles {
             let computed = self
-                .computed_tile(
-                    redis_client,
-                    &coords,
-                    &tile,
-                    &mut tmp_hash,
-                    redis_conn_to_reuse.clone(),
-                )
+                .computed_tile(redis_client, con, &coords, &tile, &mut tmp_hash)
                 .await
                 .unwrap();
 

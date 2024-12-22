@@ -273,34 +273,27 @@ impl GameData {
             .await
             .expect("Could not open connection");
 
-        // If the tile exists (aka is owned by someone)
-        if let Some(current_tile) = redis_client
-            .get_tile(click_coords, redis_conn_to_reuse.clone())
-            .await
-            .expect(&format!(
-                "Redis error occured why retrieving tile at {click_coords:?}",
-            ))
-        {
-            let mut updated_tile = current_tile.clone();
+        // helpful hashmap to recompute strength and avoir additionnal redis access
+        let mut tmp_hash = HashMap::new();
 
-            let mut prefetch = HashMap::new();
-            self.fetch_within(
+        let _ = self
+            .fetch_within(
                 redis_client,
                 click_coords,
-                &mut prefetch,
+                &mut tmp_hash,
                 redis_conn_to_reuse.clone(),
             )
-            .await
-            .unwrap();
+            .await;
 
-            let (_, nb_neighboors) = self.contiguous_neighbors_of_tile(
-                &prefetch,
-                click_coords,
-                &current_tile.user_id,
-                2,
-            );
+        // If the tile exists (aka is owned by someone)
+        if let Some(current_tile) = tmp_hash.get(click_coords).cloned() {
+            let mut updated_tile = current_tile.clone();
 
-            let mut damage = current_tile.damage as i8;
+            let current_owner = current_tile.user_id.clone();
+            let mut damage = current_tile.clone().damage as i8;
+
+            let (_, nb_neighboors) =
+                { self.contiguous_neighbors_of_tile(&tmp_hash, click_coords, &current_owner, 2) };
 
             // If the tile is not owned by the clicking user
             if current_tile.user_id != click_user_id {
@@ -317,7 +310,10 @@ impl GameData {
                     updated_tile.user_id = click_user_id.to_string();
                     updated_tile.damage = 0;
 
-                    // 0 => Directly insert tile with new user_id to ease strength computing below
+                    // propagate change to redis shared state
+                    tmp_hash.insert(click_coords.clone(), updated_tile.clone());
+
+                    // 0 => insert tile with new user_id (effectively write the data in shared state)
                     redis_client
                         .set_tile(
                             click_coords,
@@ -329,38 +325,33 @@ impl GameData {
                             "Could not update tile at {click_coords:?} with new user id"
                         ));
 
-                    let mut prefetch = HashMap::new();
-                    // fetch once all neighboors
-                    self.fetch_within(
-                        redis_client,
-                        click_coords,
-                        &mut prefetch,
-                        redis_conn_to_reuse.clone(),
-                    )
-                    .await
-                    .unwrap();
-
                     // 1. append former owner tiles to `update_tiles`
-                    let (tiles, _) = self.contiguous_neighbors_of_tile(
-                        &prefetch,
-                        &click_coords,
-                        &current_tile.user_id,
-                        2,
-                    );
+                    let (tiles, _) = {
+                        self.contiguous_neighbors_of_tile(
+                            &tmp_hash,
+                            &click_coords,
+                            &current_owner,
+                            2,
+                        )
+                    };
+
                     updated_tiles.append(&mut tiles.clone());
 
                     // 2 => append new owner's tiles to `update_tiles` vec, will compute final strength at the end
-                    let (tiles, _) = self.contiguous_neighbors_of_tile(
-                        &prefetch,
-                        &click_coords,
-                        click_user_id,
-                        2,
-                    );
+                    let (tiles, _) = {
+                        self.contiguous_neighbors_of_tile(
+                            &tmp_hash,
+                            &click_coords,
+                            click_user_id,
+                            2,
+                        )
+                    };
                     updated_tiles.append(&mut tiles.clone());
                 } else {
                     // Update current tile without changing ownership, not yet "destroyed"
                     // but with augmented damage
                     updated_tile.damage += 1;
+                    tmp_hash.insert(click_coords.clone(), updated_tile.clone());
                     redis_client
                         .set_tile(
                             click_coords,
@@ -378,6 +369,7 @@ impl GameData {
                 // if has some damage => heals its tile
                 if current_tile.damage > 0 {
                     updated_tile.damage -= 1;
+                    tmp_hash.insert(click_coords.clone(), updated_tile.clone());
                     redis_client
                         .set_tile(
                             click_coords,
@@ -403,26 +395,18 @@ impl GameData {
                 user_id: click_user_id.to_string(),
                 damage: 0,
             };
+            tmp_hash.insert(click_coords.clone(), new_tile.clone());
 
             match redis_client
                 .set_tile(click_coords, new_tile.clone(), redis_conn_to_reuse.clone())
                 .await
             {
                 Ok(_) => {
-                    let mut prefetch = HashMap::new();
                     updated_tiles.push((click_coords.clone(), new_tile.clone()));
 
-                    self.fetch_within(
-                        redis_client,
-                        &click_coords,
-                        &mut prefetch,
-                        redis_conn_to_reuse.clone(),
-                    )
-                    .await
-                    .unwrap();
                     // append its neighboors to have new strength
                     let (tiles, _) = self.contiguous_neighbors_of_tile(
-                        &prefetch,
+                        &mut tmp_hash,
                         &click_coords,
                         click_user_id,
                         2,
@@ -440,15 +424,13 @@ impl GameData {
         }
 
         let mut res = Vec::new();
-        let mut prefetch = HashMap::new();
-
         for (coords, tile) in updated_tiles {
             let computed = self
                 .computed_tile(
                     redis_client,
                     &coords,
                     &tile,
-                    &mut prefetch,
+                    &mut tmp_hash,
                     redis_conn_to_reuse.clone(),
                 )
                 .await

@@ -517,7 +517,7 @@ pub async fn game_behavior_taking_ownership() {
         .expect("Should find tile at (0,1)");
     assert!(
         tile_to_check.damage == 0 && tile_to_check.user_id == String::from("first_user_id"),
-        "(0,1) should now be owned by first user and have no damage anymore"
+        "(0,1) should now be owned by first user and have no damage anymore, got {tile_to_check:?}"
     );
 
     let len = updated_tiles.len();

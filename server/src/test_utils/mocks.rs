@@ -7,13 +7,13 @@ use crate::{coords::AxialCoords, game::InnerTileData, store::RedisHandler};
 use tokio::sync::RwLock;
 
 pub struct MockRedisHandler {
-    pub mock_data: Arc<RwLock<HashMap<AxialCoords, InnerTileData>>>,
+    pub mock_grid: Arc<RwLock<HashMap<AxialCoords, InnerTileData>>>,
 }
 
 impl MockRedisHandler {
     pub fn new() -> Self {
         Self {
-            mock_data: Arc::new(RwLock::new(HashMap::new())),
+            mock_grid: Arc::new(RwLock::new(HashMap::new())),
         }
     }
 }
@@ -25,7 +25,7 @@ impl RedisHandler for MockRedisHandler {
     }
 
     async fn flushdb(&self) -> redis::RedisResult<()> {
-        let mut write = self.mock_data.write().await;
+        let mut write = self.mock_grid.write().await;
 
         write.clear();
 
@@ -33,7 +33,7 @@ impl RedisHandler for MockRedisHandler {
     }
 
     async fn count_tiles_by_user(&self, user_id: &str) -> redis::RedisResult<usize> {
-        let read = self.mock_data.read().await;
+        let read = self.mock_grid.read().await;
 
         let mut count = 0;
 
@@ -51,7 +51,7 @@ impl RedisHandler for MockRedisHandler {
         coords: Vec<AxialCoords>,
         _reuse_con: Option<MultiplexedConnection>,
     ) -> redis::RedisResult<Vec<(AxialCoords, InnerTileData)>> {
-        let read = self.mock_data.read().await;
+        let read = self.mock_grid.read().await;
         let mut results = Vec::new();
         for c in coords.iter() {
             match read.get(c) {
@@ -72,7 +72,7 @@ impl RedisHandler for MockRedisHandler {
         coords: &AxialCoords,
         _reuse_con: Option<MultiplexedConnection>,
     ) -> redis::RedisResult<Option<InnerTileData>> {
-        let read = self.mock_data.read().await;
+        let read = self.mock_grid.read().await;
         Ok(read.get(&coords).cloned())
     }
 
@@ -82,7 +82,7 @@ impl RedisHandler for MockRedisHandler {
         tile: InnerTileData,
         _reuse_con: Option<MultiplexedConnection>,
     ) -> redis::RedisResult<()> {
-        let mut write = self.mock_data.write().await;
+        let mut write = self.mock_grid.write().await;
         write.insert(coords.clone(), tile);
         Ok(())
     }

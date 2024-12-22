@@ -19,7 +19,7 @@ case "$1" in
     ;;
   up)
     echo "Starting the application..."
-    docker-compose -f docker-compose.yml up --build
+    docker-compose -f docker-compose.yml up --build --remove-orphans
     ;;
   *)
     usage

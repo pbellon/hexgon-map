@@ -115,6 +115,7 @@ async fn register_user(
     clients: web::Data<ClientList>,
     post_params: web::Json<RegisterUserParams>,
 ) -> impl Responder {
+    log::info!("/login received");
     let username = post_params.into_inner().username;
     let user = users.register_user(&username).await;
 
@@ -127,6 +128,7 @@ fn cors_middleware(app_config: &GameConfig) -> Cors {
     Cors::default()
         .allowed_methods(vec!["GET", "POST"])
         .allowed_origin(&app_config.front_end_url)
+        .allowed_origin(&app_config.locust_url)
         .allowed_headers(vec![
             http::header::ACCEPT,
             http::header::CONTENT_TYPE,

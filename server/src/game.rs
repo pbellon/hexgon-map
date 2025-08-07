@@ -215,8 +215,8 @@ impl GameData {
 
         let res = redis_client.batch_get_tiles(con, coords_to_fetch).await?;
 
-        for (coord, data) in res.iter() {
-            previously_fetched.insert(*coord, data.clone());
+        for (coord, data) in res.into_iter() {
+            previously_fetched.insert(coord, data);
         }
 
         Ok(true)

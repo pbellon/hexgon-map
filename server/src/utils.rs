@@ -18,7 +18,7 @@ where
 {
     let data = GameData::new(radius, grid_rows_and_cols);
 
-    for (coords, _) in data.precomputed_neighbors.clone() {
+    for (coords, _) in &data.precomputed_neighbors {
         redis_client
             .set_tile(
                 con,

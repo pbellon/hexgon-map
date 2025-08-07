@@ -29,7 +29,7 @@ async fn post_tile(
     let mut con = redis_pool.get().await.unwrap();
 
     if redis_client
-        .is_valid_token_for_user(&mut con, user_id_auth, token)
+        .is_valid_token_for_user(&mut con, token, user_id_auth)
         .await
         .unwrap()
     {
@@ -139,7 +139,7 @@ async fn register_user(
     match redis_client.add_user(&mut con, user.clone()).await {
         Ok(_) => {
             notify_new_user(&clients, &user.id, &user.username, &user.color);
-
+            // println!("[main.register_user] DONE, saved {} in DB", user.username);
             return HttpResponse::Ok().json(user);
         }
         Err(_) => return HttpResponse::InternalServerError().body("Could not save user in DB"),

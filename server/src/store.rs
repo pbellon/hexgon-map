@@ -12,11 +12,11 @@ use crate::{
 /// Redis prefixes and keys
 const USER_IDS_KEY: &str = "user_ids";
 
-const USER_PREFIX: &str = "user:";
+const USER_PREFIX: &str = "user";
 
-const TILE_PREFIX: &str = "tile:";
+const TILE_PREFIX: &str = "tile";
 
-const TOKEN_PREFIX: &str = "token:";
+const TOKEN_PREFIX: &str = "token";
 
 const TILE_INDEX: &str = "idx:tile";
 
@@ -167,7 +167,7 @@ impl RedisHandler for redis::Client {
     }
 
     async fn count_tiles_by_user(&self, user_id: &str) -> Result<usize, redis::RedisError> {
-        log::warn!("Not implemented count_tiles_by_user({user_id})");
+        // log::warn!("Not implemented count_tiles_by_user({user_id})");
 
         Ok(0)
     }
@@ -215,6 +215,7 @@ impl RedisHandler for redis::Client {
     where
         C: redis::aio::ConnectionLike + Send,
     {
+        // println!("[RedisHandler.add_user] will add user into Redis DB");
         let key = get_user_key(&user);
         let mut pipe = redis::pipe();
 
@@ -223,8 +224,15 @@ impl RedisHandler for redis::Client {
         let color = user.color.clone();
         let token = user.token.clone();
 
+        let token_key = get_token_key(&id);
         // add token
-        pipe.set(get_token_key(&id), &token);
+        pipe.set(token_key.clone(), &token);
+
+        // println!(
+        //     "[redis::Client.add_user] Will set token ({}) at {})",
+        //     token,
+        //     &token_key.clone()
+        // );
 
         pipe.cmd("hset").arg(&key).arg("id").arg(&id);
 
@@ -293,11 +301,15 @@ impl RedisHandler for redis::Client {
     where
         C: redis::aio::ConnectionLike + Send,
     {
-        let r_token: Option<String> = redis::Cmd::get(get_token_key(user_id))
-            .query_async(con)
-            .await?;
+        let token_key = get_token_key(user_id);
 
-        return Ok(r_token == Some(token.to_string()));
+        let r_token: Option<String> = redis::Cmd::get(token_key).query_async(con).await?;
+
+        if let Some(t) = r_token {
+            return Ok(t == token.to_string());
+        } else {
+            return Ok(false);
+        }
     }
 }
 

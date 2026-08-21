@@ -79,7 +79,7 @@ impl GameData {
                 .await
             {
                 Ok(tiles) => {
-                    let mut temp_fetched_map: HashMap<AxialCoords, InnerTileData> = HashMap::new();
+                    let mut temp_fetched_map: HashMap<&AxialCoords, &InnerTileData> = HashMap::new();
 
                     for (coords, tile) in tiles {
                         match self
@@ -136,24 +136,24 @@ impl GameData {
 
     /// Returns all tiles that are contiguous to the given `coords`, i.e., all "connected" tiles next to `coords`
     /// that are owned by the specified `user_id`.
-    pub fn contiguous_neighbors_of_tile(
+    pub fn contiguous_neighbors_of_tile<'a, 'b, 'c>(
         &self,
-        prefetched: &HashMap<AxialCoords, InnerTileData>,
+        prefetched: &'a HashMap<&'b AxialCoords, &'c InnerTileData>,
         tile_coords: &AxialCoords,
         user_id: &str,
         radius: u8,
-    ) -> (Vec<(AxialCoords, InnerTileData)>, u8) {
+    ) -> (Vec<(&'b AxialCoords, &'c InnerTileData)>, u8) {
         let mut count = 0;
-        let mut processed_set: HashSet<AxialCoords> = HashSet::new();
+        let mut processed_set: HashSet<&AxialCoords> = HashSet::new();
         let mut results = Vec::new();
-        let mut to_check = vec![*tile_coords];
+        let mut to_check = vec![tile_coords];
 
         for _ in 0..radius {
             let mut next_to_check = Vec::new();
 
             for coords_to_check in to_check.drain(..) {
                 if let Some(ring) = self.precomputed_neighbors.get(&coords_to_check) {
-                    let filtered_neighbors: Vec<(AxialCoords, InnerTileData)> = ring
+                    let filtered_neighbors: Vec<(&AxialCoords, &InnerTileData)> = ring
                         .iter()
                         .filter_map(|rc| {
                             rc.and_then(|drc| {
@@ -163,7 +163,7 @@ impl GameData {
 
                                 if let Some(nb) = prefetched.get(&drc) {
                                     if nb.user_id == user_id {
-                                        return Some((drc.clone(), nb.clone()));
+                                        return Some((&drc, *nb));
                                     }
                                 }
 
@@ -190,12 +190,12 @@ impl GameData {
 
     /// helper fn to prefetch the HashMap<AxialCoords, InnerTileData>
     /// that will be used by `contiguous_neighbors_of_tile`
-    pub async fn fetch_within<'a, R, C>(
+    pub async fn fetch_within<'a, 'b, R, C>(
         &self,
-        redis_client: &R,
+        redis_client: &'a R,
         con: &mut C,
         coords: &AxialCoords,
-        previously_fetched: &mut HashMap<AxialCoords, InnerTileData>,
+        previously_fetched: &'a mut HashMap<&'b AxialCoords, &InnerTileData>,
     ) -> redis::RedisResult<bool>
     where
         R: RedisHandler,
@@ -228,7 +228,7 @@ impl GameData {
         con: &mut C,
         coords: &AxialCoords,
         tile: &InnerTileData,
-        prefetched: &mut HashMap<AxialCoords, InnerTileData>,
+        prefetched: &mut HashMap<&AxialCoords, &InnerTileData>,
     ) -> redis::RedisResult<TileData>
     where
         R: RedisHandler,
@@ -275,7 +275,7 @@ impl GameData {
         R: RedisHandler,
         C: redis::aio::ConnectionLike + Send,
     {
-        let mut updated_tiles: Vec<(AxialCoords, InnerTileData)> = Vec::new();
+        let mut updated_tiles: Vec<(&AxialCoords, &InnerTileData)> = Vec::new();
 
         // helpful hashmap to recompute strength and avoir additionnal redis access
         let mut tmp_hash = HashMap::new();
@@ -286,7 +286,7 @@ impl GameData {
 
         // If the tile exists (aka is owned by someone)
         if let Some(current_tile) = tmp_hash.get(click_coords).cloned() {
-            let mut updated_tile = current_tile.clone();
+            let mut updated_tile = &current_tile;
 
             let current_owner = current_tile.user_id.clone();
             let mut damage = current_tile.clone().damage as i8;
@@ -330,7 +330,7 @@ impl GameData {
                         )
                     };
 
-                    updated_tiles.append(&mut tiles.clone());
+                    updated_tiles.append(&mut tiles);
 
                     // 2 => append new owner's tiles to `update_tiles` vec, will compute final strength at the end
                     let (tiles, _) = {
@@ -389,7 +389,7 @@ impl GameData {
                 .await
             {
                 Ok(_) => {
-                    updated_tiles.push((click_coords.clone(), new_tile.clone()));
+                    updated_tiles.push((click_coords, new_tile));
 
                     // append its neighboors to have new strength
                     let (tiles, _) = self.contiguous_neighbors_of_tile(

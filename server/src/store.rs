@@ -87,7 +87,7 @@ pub trait RedisHandler {
         &self,
         con: &mut C,
         coords: Vec<AxialCoords>,
-    ) -> redis::RedisResult<Vec<(AxialCoords, InnerTileData)>>
+    ) -> redis::RedisResult<Vec<(&AxialCoords, &InnerTileData)>>
     where
         C: redis::aio::ConnectionLike + Send;
 
@@ -128,7 +128,7 @@ impl RedisHandler for redis::Client {
         &self,
         con: &mut C,
         coords: Vec<AxialCoords>,
-    ) -> redis::RedisResult<Vec<(AxialCoords, InnerTileData)>>
+    ) -> redis::RedisResult<Vec<(&AxialCoords, &InnerTileData)>>
     where
         C: redis::aio::ConnectionLike + Send,
     {
